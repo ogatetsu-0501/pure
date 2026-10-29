@@ -44,7 +44,7 @@
     for(const item of items) {
       const known = byCode.get(item.itemCode);
       const name = item.itemName || known?.itemName || '';
-      const bagcat = item.bagcat || known?.parts || '';
+      const bagcat = known?.parts || item.bagcat || '';
       const part = names.get(bagcat) || (known?.parts ? names.get(known.parts) : '') || '';
       const matches = [...name.matchAll(/【([A-Z]+)\+(\d+)(?:%|％)?】/g)];
       if(!matches.length) { nonStatus++; continue; }
