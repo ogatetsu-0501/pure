@@ -132,6 +132,17 @@
       const targetOrigin='https://ogatetsu-0501.github.io';
       const target=window.open(targetOrigin+'/pure/#closet-import', 'puretomo-closet-sync');
       let pages=0,items=[];
+      // ブックマークレットは公式サイト上で動作するため、画面中央に大きな進捗表示を作ります。
+      const progress=document.createElement('div');
+      progress.id='puretomo-bookmarklet-progress';
+      progress.setAttribute('role','status');
+      progress.setAttribute('aria-live','polite');
+      progress.style.cssText='position:fixed;inset:0;z-index:2147483647;background:rgba(12,20,34,.82);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;color:#fff;font-family:sans-serif;text-align:center';
+      progress.innerHTML='<div style="background:#17283c;border:2px solid #70d7ff;border-radius:20px;padding:36px 28px;width:min(520px,100%);box-shadow:0 12px 55px rgba(0,0,0,.5)"><div style="font-size:clamp(26px,6vw,42px);font-weight:800;margin-bottom:18px">所持アバターを取り込み中</div><div id="puretomo-bookmarklet-progress-detail" style="font-size:clamp(18px,4vw,24px);line-height:1.65">クローゼットのデータを取得しています…</div><div style="font-size:15px;margin-top:24px;opacity:.9">完了するまで、このページを閉じないでください</div></div>';
+      document.getElementById(progress.id)?.remove();
+      document.body.append(progress);
+      const progressDetail=progress.querySelector('#puretomo-bookmarklet-progress-detail');
+      const setProgress=message=>{progressDetail.textContent=message;};
       try {
         // 公式クローゼット上で全77件・6ページの取得を検証済み。
         // closet=S は「全所持品」を示すパラメータではない。
@@ -151,6 +162,7 @@
           throw Error('全ページ数を確認できません');
         if(!Number.isInteger(maxCount) || maxCount<0 || maxCount>10000)
           throw Error('全所持数を確認できません');
+        setProgress('全 '+maxCount+' 点・'+maxPage+' ページの取得を開始します');
         const seen=new Set();
         for(let page=1;page<=maxPage;page++){
           if(page>1)await new Promise(resolve=>setTimeout(resolve,1200));
@@ -169,12 +181,14 @@
             items.push(item);
           }
           pages++;
+          setProgress('一覧を取得中：'+pages+' / '+maxPage+' ページ（'+items.length+' / '+maxCount+' 点）');
           if(items.length>maxCount)throw Error('取得数が総件数を超えました');
         }
         if(items.length!==maxCount || seen.size!==maxCount)
           throw Error('全件取得に失敗しました: '+items.length+'/'+maxCount+'件');
         // 未登録のステータス付きコードを個別APIで確認する。最大15件、逐次通信。
         // CORS制限・出品なし等で取得できなければ推測せず保留。
+        setProgress('所持品の取得完了：'+maxCount+' 点。詳細情報を確認中…');
         let masterUpdates=[];
         try {
           const masterResponse=await fetch(targetOrigin+'/pure/itemCodeSchema.json');
@@ -184,6 +198,7 @@
             /^【[^+】]+\+[^】]+】/.test(row.name||'')&&!knownCodes.has(row.code))
             .map(row=>[row.code,row])).values()].slice(0,15);
           for(const [index,item] of missing.entries()){
+            setProgress('詳細情報を確認中：'+(index+1)+' / '+missing.length+' 件');
             if(index || pages) await new Promise(resolve=>setTimeout(resolve,1200));
             try {
               const url='https://puretomo-ap.hange.jp/api/noauth/bazaar/itemDetail.json?category=hancoin&itemCode='+
@@ -208,6 +223,7 @@
         })).filter(item=>item.itemCode);
         if(sanitized.length!==maxCount)
           throw Error('データ変換が不完全です: '+sanitized.length+'/'+maxCount+'件');
+        setProgress('取得完了。Puretomoアシスタントへデータを送信中…');
         const data={type:'puretomo:closet-data',version:1,items:sanitized,masterUpdates};
         let acked=false;
         const ack=event=>{
@@ -219,7 +235,9 @@
           await new Promise(resolve=>setTimeout(resolve,650));
         }
         window.removeEventListener('message',ack);
+        if(acked) setProgress('データを送信しました。Puretomoアシスタントを確認してください。');
         if(!acked) {
+          setProgress('自動送信できなかったため、JSONファイルを保存します');
           const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
           const a=document.createElement('a'),url=URL.createObjectURL(blob);
           a.href=url;a.download='puretomo-closet-'+new Date().toISOString().slice(0,10)+'.json';
@@ -227,8 +245,11 @@
           alert('ブラウザ内で '+sanitized.length+' 点を取得しました。\nJSONをダウンロードしたので、Puretomoの所持一覧から読み込んでください。');
         }
       }catch(error) {
+        setProgress('取り込みに失敗しました：'+error.message);
         alert('クローゼットの取り込みに失敗しました：'+error.message+
           '\nログイン済みか、クローゼットの「ALL」が表示されているか確認してください。');
+      }finally {
+        progress.remove();
       }
     })();
   }
