@@ -142,5 +142,17 @@
     "itemName": "【VIT+4】フォー・ユー",
     "parts": "",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "PA2AN",
+    "itemName": "プリティプリティ",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "",
+    "itemGender": "A"
   }
 ]
