@@ -1779,7 +1779,7 @@ p, li { color: #deddd9; }
         const knownCombos = {
           'P/L':['POW','LUK'], ALL:['POW','INT','SPD','VIT','LUK'],
         };
-        const types = knownCombos[label] || [label];
+        const types = knownCombos[label] || (label.includes('/') ? [] : [label]);
         const value = numeric(match?.[2]);
         return types.filter(Boolean).map(type => ({
           code, name, type, value,
