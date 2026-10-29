@@ -1,0 +1,86 @@
+[
+  {
+    "alias": "AT/DF",
+    "count": 2,
+    "examples": [
+      {
+        "itemCode": "FA21O1",
+        "name": "【AT／DF+10】案内嬢プリム"
+      },
+      {
+        "itemCode": "FA11NX",
+        "name": "【AT／DF+10】不敵なヴァン"
+      }
+    ],
+    "parameters": [],
+    "reviewed": false
+  },
+  {
+    "alias": "P/I",
+    "count": 2,
+    "examples": [
+      {
+        "itemCode": "FA119X",
+        "name": "【P／I+1】メイジッコ"
+      },
+      {
+        "itemCode": "FA21A1",
+        "name": "【P／I+1】プリッコ"
+      }
+    ],
+    "parameters": [
+      "POW",
+      "INT"
+    ],
+    "reviewed": false
+  },
+  {
+    "alias": "P/L",
+    "count": 2,
+    "examples": [
+      {
+        "itemCode": "FA21TG",
+        "name": "【P／L+2】ノクスフェイス"
+      },
+      {
+        "itemCode": "FA11TI",
+        "name": "【P／L+2】ノクスフェイス"
+      }
+    ],
+    "parameters": [
+      "POW",
+      "LUK"
+    ],
+    "reviewed": false
+  },
+  {
+    "alias": "S/L",
+    "count": 1,
+    "examples": [
+      {
+        "itemCode": "FA110Q3",
+        "name": "【S／L+2】オルタフェイス"
+      }
+    ],
+    "parameters": [
+      "SPD",
+      "LUK"
+    ],
+    "reviewed": false
+  },
+  {
+    "alias": "V/L",
+    "count": 1,
+    "examples": [
+      {
+        "itemCode": "FA11FS",
+        "name": "【V／L+2】ビビリフェイス"
+      }
+    ],
+    "parameters": [
+      "VIT",
+      "LUK"
+    ],
+    "reviewed": false
+  }
+]
