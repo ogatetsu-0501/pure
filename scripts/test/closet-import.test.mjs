@@ -50,3 +50,14 @@ test('スマホChrome向けブックマークURLは実行可能な1行のJavaScr
   assert.match(url,/closet=S&page=/);
   assert.doesNotMatch(url,/bagcat=ALL/);
 });
+
+test('マスターの部位をJSONより優先し、LDの下衣装をボトムスとして判定',async()=>{
+  const csv=await readFile(new URL('../../bagcat_labels.csv',import.meta.url),'utf8');
+  const labels=new Map(csv.trim().split(/\r?\n/).slice(1).map(line=>line.split(',')));
+  assert.equal(labels.get('LD'),'ボトムス');
+  const schema=JSON.parse(await readFile(new URL('../../itemCodeSchema.json',import.meta.url),'utf8'));
+  const item=schema.find(x=>x.itemCode==='LD119JI');
+  assert.equal(item.parts,'L');
+  assert.equal(labels.get(item.parts),'ボトムス');
+  assert.match(script,/const bagcat = known\?\.parts \|\| item\.bagcat \|\| '';/);
+});
