@@ -69,7 +69,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "schedule" ]] && \
               git diff --quiet -- \
                 bazzarList.json itemAnother.json itemCodeSchema.json \
-                malebuzzerHistory.json femalebuzzerHistory.json; then
+                malebuzzerHistory.json femalebuzzerHistory.json update-status.json; then
             echo "should-deploy=false" >> "$GITHUB_OUTPUT"
           else
             echo "should-deploy=true" >> "$GITHUB_OUTPUT"
@@ -84,7 +84,7 @@ jobs:
             "No_001~2.png" "file_0000000078ac61f7b83750d02fab108a.png" \
             ads.txt bagcat_labels.csv type_options.csv \
             bazzarList.json itemAnother.json itemCodeSchema.json \
-            buzzerHistory.json malebuzzerHistory.json femalebuzzerHistory.json
+            buzzerHistory.json malebuzzerHistory.json femalebuzzerHistory.json update-status.json
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
