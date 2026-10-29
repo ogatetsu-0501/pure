@@ -107,3 +107,13 @@ test('詳細APIエラーなら部分更新せず例外を返す',async()=>{
     loadDetail:async()=>{throw Error('HTTP 503')},
   })),/HTTP 503/);
 });
+
+test('未取得の複合ステータスを既取得の変更項目より優先する',()=>{
+  const rows=[
+    {itemCode:'ORDINARY',itemName:'【HP+5】既存',listingCount:2},
+    {itemCode:'COMPOUND',itemName:'【AT／DF+10】複合',listingCount:1},
+    {itemCode:'SINGLE',itemName:'【MOV+20】新規',listingCount:1},
+  ];
+  const entries={ORDINARY:{listingCount:1,checkedAt:now.getTime()-3600000,detail:{itemInfo:{itemName:'【HP+5】既存'},tradeItemList:[]}}};
+  assert.deepEqual(chooseDetails(rows,entries,now.getTime(),1).map(row=>row.itemCode),['COMPOUND']);
+});
