@@ -22,7 +22,6 @@
       })).filter(item => item.itemCode);
   }
 
-  const text = value => String(value ?? '');
 
   async function importCloset(source, method) {
     const status = $('closetImportStatus');
@@ -111,13 +110,15 @@
       const target=window.open(targetOrigin+'/pure/#closet-import', 'puretomo-closet-sync');
       let pages=0,items=[];
       try {
-        const api='https://puretomo-ap.hange.jp/api/closet/itembag.json?bagcat=ALL&page=';
+        // 公式クローゼットが使う一覧API。ALLは正規のbagcat値と確認できないため使わない。
+        // closet=S は公式フロントエンドの「ALL」画面で利用されている。
+        const api='https://puretomo-ap.hange.jp/api/closet/itembag.json?closet=S&page=';
         const load=async page=>{
           const response=await fetch(api+page,{credentials:'include',headers:{Accept:'application/json'}});
-          if(!response.ok) throw Error('クローゼットAPI HTTP '+response.status);
+          if(!response.ok) throw Error('クローゼットAPI HTTP '+response.status+'。ログイン・Cookie・API通信が制限されている可能性があります');
           const payload=await response.json();
           if(payload.status && payload.status !== 'SUCCESS') throw Error('クローゼットAPI: '+payload.status);
-          if(!Array.isArray(payload.result?.itemList)) throw Error('所持一覧の形式を確認できません');
+          if(!Array.isArray(payload.result?.itemList)) throw Error('所持一覧の形式を確認できません（itemList不在）');
           return payload.result;
         };
         const first=await load(1);
@@ -135,7 +136,7 @@
           bagcat:String(item.bagcat||'').slice(0,50),
           itemGender:String(item.itemGender||'').slice(0,5),
         })).filter(item=>item.itemCode);
-        if(!sanitized.length)throw Error('所持アバターが取得できませんでした');
+        if(!sanitized.length)throw Error('所持アバターが取得できませんでした（全ページにitemCodeがありません）');
         const data={type:'puretomo:closet-data',version:1,items:sanitized};
         let acked=false;
         const ack=event=>{
@@ -175,7 +176,7 @@
   document.addEventListener('DOMContentLoaded',()=>{
     const link=$('closetBookmarklet');
     // ブラウザのブックマークバーにドラッグして登録する用途。
-    link.href='javascript:('+encodeURIComponent(closetBookmarklet.toString())+')()';
+    link.href='javascript:('+closetBookmarklet.toString()+')()';
     $('copyClosetBookmarklet').addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(link.href);
