@@ -89,3 +89,19 @@ test('複数選択UIは全選択・解除と保存に対応',()=>{
   assert.match(market[2],/localStorage\.setItem\('efficiencyParameters'/);
   assert.match(market[2],/state\.efficiencyTypes\s*=\s*new Set/);
 });
+
+test('販売一覧からATK DEF MOVを自動抽出し複合タグも分解',()=>{
+  const start=market[2].indexOf('  function buildListing(raw, lookup, parts)');
+  const end=market[2].indexOf('\n  function updateFilterOptions(',start);
+  const snippet=market[2].slice(start,end);
+  const fn=new Function('numericPrice','parseDate','numeric',snippet+'\nreturn buildListing;')(
+    x=>Number(x.hancoin),()=>0,x=>parseInt(x,10)||0
+  );
+  const lookup=new Map([
+    ['A',{itemName:'【AT／DF+10】例',parts:'FA'}],
+    ['B',{itemName:'【MOV+20】例',parts:'AD'}],
+  ]);
+  const listing=fn({bazaarId:'a',hancoin:100,listingItems:['A','B']},lookup,new Map([['FA','フェイス'],['AD','めがね']]));
+  assert.deepEqual(listing.items.map(x=>x.type).sort(),['ATK','DEF','MOV']);
+  assert.match(market[2],/items\.flatMap\(row => row\.items\.map\(item => item\.type\)/);
+});
