@@ -51,7 +51,9 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
     concurrency: DETAIL_CONCURRENCY, now,
   });
   // 全データの取得が完了した場合に限って、変更されたJSONを更新します。
+  let hasChanged = false;
   for (const [filename, data] of Object.entries(result)) {
+    if (filename === 'update-status.json') continue;
     const target = path.join(root, filename);
     const content = JSON.stringify(data, null, 2);
     const previous = await readFile(target, 'utf8').catch(error => {
@@ -59,10 +61,18 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
       throw error;
     });
     if (previous === content) continue;
+    hasChanged = true;
     const temporary = target + '.tmp';
     await writeFile(temporary, content, 'utf8');
     await rename(temporary, target);
     console.log('更新: ' + filename);
+  }
+  if (hasChanged) {
+    const target = path.join(root, 'update-status.json');
+    const temp = target + '.tmp';
+    await writeFile(temp, JSON.stringify(result['update-status.json'], null, 2), 'utf8');
+    await rename(temp, target);
+    console.log('更新: update-status.json');
   }
   console.log('バザー集計完了: ' + result['bazzarList.json'].length + '件');
   return result;
