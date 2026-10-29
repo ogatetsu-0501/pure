@@ -23,10 +23,30 @@
   }
 
 
+  // アシスタント側で反映処理の進捗を大きく表示します。
+  function showImportProgress(message, finished = false) {
+    let box = document.getElementById('puretomo-import-progress');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'puretomo-import-progress';
+      box.setAttribute('role', 'status');
+      box.setAttribute('aria-live', 'polite');
+      box.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(10,20,35,.8);padding:20px;box-sizing:border-box';
+      box.innerHTML = '<div style="width:min(560px,100%);background:#162b40;color:#fff;text-align:center;border:2px solid #72d2ff;border-radius:18px;padding:36px 24px;font-family:sans-serif"><h2 id="puretomo-import-title" style="font-size:clamp(26px,5vw,38px);margin:0 0 20px"></h2><p id="puretomo-import-detail" style="font-size:clamp(18px,4vw,24px);line-height:1.7"></p><button type="button" id="puretomo-import-close" style="display:none;margin-top:20px;padding:12px 25px;font-size:18px;cursor:pointer">閉じる</button></div>';
+      box.querySelector('#puretomo-import-close').addEventListener('click', () => box.remove());
+      document.body.append(box);
+    }
+    box.querySelector('#puretomo-import-title').textContent = finished ? '取り込み処理が終了しました' : '所持アバターを反映中';
+    box.querySelector('#puretomo-import-detail').textContent = message;
+    box.querySelector('#puretomo-import-close').style.display = finished ? 'inline-block' : 'none';
+  }
+
   async function importCloset(source, method) {
     const status = $('closetImportStatus');
+    showImportProgress('取得したアバターを検証しています…');
     const items = normalizeItems(source);
     if (!items.length) throw Error('取り込み可能なアバターが見つかりません');
+    showImportProgress('マスターデータを読み込んでいます…');
     const [schemaRes, labelsRes] = await Promise.all([
       fetch('itemCodeSchema.json'), fetch('bagcat_labels.csv'),
     ]);
@@ -49,6 +69,7 @@
     let existing;
     try { existing = JSON.parse(localStorage.getItem('avatarList') || '[]'); } catch { existing=[]; }
     if(!Array.isArray(existing)) existing = [];
+    showImportProgress('所持ステータスを照合しています…（'+items.length+'点）');
     const updates = new Map();
     const unresolvedCodes = new Set();
     let unresolved=0, nonStatus=0;
@@ -98,12 +119,13 @@
       window.dispatchEvent(new Event('puretomo:owned-changed'));
       status.textContent = '取り込んだ所持品 '+items.length+'件を照合しました。所持最大値の更新はありません。'+
         '（登録一覧は部位とパラメータごとの最大値に集約されます）';
+      showImportProgress('反映完了：'+items.length+'点を照合、更新はありません。', true);
       return {items:items.length,changes:0};
     }
     if (!window.confirm(
       'クローゼットの '+items.length+' 件を確認し、所持最大値を '+additions.length+
       ' 件更新します。\n既存の登録は保持されます。続行しますか？'
-    )) return {items:items.length,changes:0,cancelled:true};
+    )) {showImportProgress('反映はキャンセルされました。', true);return {items:items.length,changes:0,cancelled:true};}
     // 同じアイテム・同じ上昇値から選出された効果は、1つの所持レコードにまとめます。
     // 別アイテムの既存最大値は保持し、過去のデータを誤って消さないようにします。
     const grouped=new Map();
@@ -135,6 +157,7 @@
         changes++;
       }
     }
+    showImportProgress('所持データを保存しています…');
     localStorage.setItem('avatarList', JSON.stringify(existing));
     localStorage.setItem('closetOwnedItems', JSON.stringify(items));
     window.dispatchEvent(new Event('puretomo:owned-changed'));
@@ -143,6 +166,7 @@
       '件の所持最大値を更新しました。'+
       (nonStatus?'（ステータス対象外 '+nonStatus+'件）':'')+
       (unresolved?'（部位不明 '+unresolved+'件）':'');
+    showImportProgress('反映完了：'+items.length+'点を照合、'+changes+'件更新しました。', true);
     return {items:items.length,changes};
   }
 
@@ -238,9 +262,9 @@
                   parts:info.bagcat,itemGender:info.itemGender||null});
                 item.bagcat=info.bagcat;
               }
-            } catch(_) { /* 未確認コードは登録せず保留 */ }
+            } catch(error) { console.error('[Puretomo 詳細取得エラー]',item.code,error); }
           }
-        } catch(_) { /* マスターにアクセスできない場合は未確認として保留 */ }
+        } catch(error) { console.error('[Puretomo マスター取得エラー]',error); }
         const sanitized=items.map(item=>({
           itemCode:String(item.itemCode||item.code||'').slice(0,80),
           itemName:String(item.itemName||item.name||'').slice(0,250),
@@ -261,7 +285,10 @@
           await new Promise(resolve=>setTimeout(resolve,650));
         }
         window.removeEventListener('message',ack);
-        if(acked) setProgress('データを送信しました。Puretomoアシスタントを確認してください。');
+        if(acked) {
+          setProgress('取得完了。アシスタントのタブに切り替えます…');
+          target?.focus();
+        }
         if(!acked) {
           setProgress('自動送信できなかったため、JSONファイルを保存します');
           const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
@@ -271,6 +298,7 @@
           alert('ブラウザ内で '+sanitized.length+' 点を取得しました。\nJSONをダウンロードしたので、Puretomoの所持一覧から読み込んでください。');
         }
       }catch(error) {
+        console.error('[Puretomo 取得エラー]',error);
         setProgress('取り込みに失敗しました：'+error.message);
         alert('クローゼットの取り込みに失敗しました：'+error.message+
           '\nログイン済みか、クローゼットの「ALL」が表示されているか確認してください。');
@@ -284,9 +312,13 @@
     if (event.origin !== BRIDGE_ORIGIN || event.data?.type !== 'puretomo:closet-data' || event.data.version !== 1) return;
     event.source?.postMessage({type:'puretomo:closet-received'},event.origin);
     window.openPuretomoOwned?.();
+    window.focus();
+    showImportProgress('Puretomoから受信したデータを読み込んでいます…');
     try {
       await importCloset(event.data,'クローゼット連携');
     }catch(error){
+      console.error('[Puretomo 反映エラー]',error);
+      showImportProgress('反映に失敗しました：'+error.message, true);
       $('closetImportStatus').textContent='取り込みエラー: '+error.message;
     }
   }
@@ -316,6 +348,8 @@
         const data=JSON.parse(await file.text());
         await importCloset(data,'JSON取り込み');
       }catch(error){
+        console.error('[Puretomo JSON取り込みエラー]',error);
+        showImportProgress('反映に失敗しました：'+error.message, true);
         $('closetImportStatus').textContent='取り込みエラー: '+error.message;
       }finally{event.target.value='';}
     });
