@@ -1,0 +1,63 @@
+name: Inspect Puretomo API response fields (one-time)
+on:
+  push:
+    paths:
+      - .github/workflows/inspect-puretomo-api.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Read API metadata (one list + one detail, no raw personal data)
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const base = 'https://puretomo-ap.hange.jp/api/noauth/';
+          const fetchJson = async (url) => {
+            const response = await fetch(url, {signal:AbortSignal.timeout(18000)});
+            console.log('HTTP', response.status, 'content-type:', response.headers.get('content-type'));
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return await response.json();
+          };
+          function val(value) {
+            if (Array.isArray(value)) return '[array:' + value.length + ']';
+            if (value && typeof value === 'object') return '[object keys:' + Object.keys(value).join(',') + ']';
+            if (typeof value === 'string') return value.slice(0, 75);
+            return value;
+          }
+          function describe(label,obj) {
+            if (!obj || typeof obj !== 'object') {console.log(label, val(obj));return;}
+            console.log(label + ' KEYS:',Object.keys(obj).join(', '));
+            const metadata = {};
+            for(const [k,v] of Object.entries(obj)) {
+              if (/user|account|seller|nick|buyer|member|token|password/i.test(k)) continue;
+              if (/code|date|time|count|update|modify|change|total|price|hancoin|gender|sort|status|last|new/i.test(k) && (v==null||typeof v!=='object')) metadata[k] = val(v);
+            }
+            console.log(label + ' METADATA:',JSON.stringify(metadata));
+          }
+          const list = await fetchJson(base+'itemtrade/search.json?sort=newItem&pageCount=10');
+          describe('LIST ROOT',list);
+          describe('LIST result',list.result);
+          const rows = list?.result?.itemList||[];
+          console.log('LIST ITEMS LENGTH',rows.length);
+          for(let i=0;i<Math.min(rows.length,3);i++)describe('LIST itemList['+i+']',rows[i]);
+          const code = rows.find(x => x?.itemCode)?.itemCode || 'AA1BA0';
+          console.log('DETAIL itemCode used',code);
+          const url=base+'bazaar/itemDetail.json?category=hancoin&itemCode='+encodeURIComponent(code)+'&pageCount=5';
+          const detail=await fetchJson(url);
+          describe('DETAIL ROOT',detail);
+          describe('DETAIL result',detail?.result);
+          describe('DETAIL itemInfo',detail?.result?.itemInfo);
+          const deals=detail?.result?.tradeItemList||[];
+          console.log('DETAIL TRADE ITEMS LENGTH',deals.length);
+          for(let i=0;i<Math.min(deals.length,2);i++){
+            describe('DETAIL trade['+i+']',deals[i]);
+            describe('DETAIL trade['+i+'].hopeItemList[0]',deals[i]?.hopeItemList?.[0]);
+            describe('DETAIL trade['+i+'].listingItemList[0]',deals[i]?.listingItemList?.[0]);
+          }
+          NODE
