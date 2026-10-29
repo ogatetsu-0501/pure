@@ -847,6 +847,16 @@ p, li { color: #deddd9; }
           <p id="closetImportStatus" role="status" aria-live="polite">ログイン情報の入力はこのサイトでは行いません。</p>
         </section>
             <!-- ここからサマリー -->
+        <section class="alias-review" aria-labelledby="aliasTitle">
+          <h3 id="aliasTitle">複合パラメータの対応候補（要確認）</h3>
+          <p>マスターから見つかった略称を一覧にしています。対応表を確認するまでは未確定です。</p>
+          <div id="aliasCandidates">読み込み中…</div>
+        </section>
+        <section class="owned-gallery-section" aria-label="取り込んだ所持アバター">
+          <h3>クローゼットから取得したアバター</h3>
+          <p id="ownedGalleryCount">0件</p>
+          <div id="ownedGallery" class="owned-gallery"></div>
+        </section>
         <div id="avatarSummary" style="margin: 0 0 12px; font-weight: bold;"></div>
     <!-- ここまでサマリー -->
         <div class="scrollable-table-container">
@@ -2046,5 +2056,6 @@ p, li { color: #deddd9; }
       }
     </script>
     <script src="closet-import.js" defer></script>
+    <script src="owned-gallery.js" defer></script>
   </body>
 </html>
