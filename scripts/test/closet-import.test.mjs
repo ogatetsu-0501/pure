@@ -6,7 +6,7 @@ import test from 'node:test';
 const script=await readFile(new URL('../../closet-import.js',import.meta.url),'utf8');
 const html=await readFile(new URL('../../index.html',import.meta.url),'utf8');
 const start=script.indexOf('  function normalizeItems(');
-const end=script.indexOf('\n  const text =',start);
+const end=script.indexOf('\n  async function importCloset(',start);
 assert.ok(start>=0&&end>start);
 const normalizeItems=new Function(script.slice(start,end)+'\nreturn normalizeItems;')();
 
@@ -34,4 +34,19 @@ test('所持一覧の取り込みUIとブックマークレットを公開',()=>
   assert.match(html,/<script src="closet-import\.js" defer><\/script>/);
   assert.match(script,/event\.origin !== BRIDGE_ORIGIN/);
   assert.match(script,/credentials:'include'/);
+});
+
+test('スマホChrome向けブックマークURLは実行可能な1行のJavaScript',()=>{
+  const start=script.indexOf('  function closetBookmarklet()');
+  const end=script.indexOf('\n  async function received(',start);
+  assert.ok(start>=0&&end>start);
+  const source=script.slice(start,end);
+  const getFn=new Function(source+'\nreturn closetBookmarklet;');
+  const fn=getFn();
+  const bookmarkletCode=fn.toString().replace(/^\s*\/\/.*$/gm,'').replace(/\s*\n\s*/g,' ');
+  const url='javascript:('+bookmarkletCode+')()';
+  assert.doesNotThrow(()=>new Script(url.slice('javascript:'.length)));
+  assert.equal(url.includes('\n'),false);
+  assert.match(url,/closet=S&page=/);
+  assert.doesNotMatch(url,/bagcat=ALL/);
 });
