@@ -40,21 +40,23 @@
     try { existing = JSON.parse(localStorage.getItem('avatarList') || '[]'); } catch { existing=[]; }
     if(!Array.isArray(existing)) existing = [];
     const updates = new Map();
+    const unresolvedCodes = new Set();
     let unresolved=0, nonStatus=0;
     for(const item of items) {
       const known = byCode.get(item.itemCode);
       const name = item.itemName || known?.itemName || '';
       const bagcat = known?.parts || item.bagcat || '';
       const part = names.get(bagcat) || (known?.parts ? names.get(known.parts) : '') || '';
-      const matches = [...name.matchAll(/【([A-Z]+)\+(\d+)(?:%|％)?】/g)];
+      const matches = [...name.matchAll(/【([^+】]+)\+([^】]+)】/g)];
       if(!matches.length) { nonStatus++; continue; }
-      if(!part) { unresolved++; continue; }
+      if(!part) { unresolved++; unresolvedCodes.add(item.itemCode); continue; }
       for(const match of matches) {
-        const type = match[1], increase = Number(match[2]);
+        const type = match[1].trim(), increase = Number(match[2].replace('％','').replace('%',''));
+        if(!/^[A-Z]+$/.test(type)) continue;
         if(!Number.isFinite(increase) || increase <= 0) continue;
         const key = part + '|' + type;
         const old = updates.get(key);
-        if(!old || increase > old.increase) updates.set(key,{part,type,increase});
+        if(!old || increase > old.increase) updates.set(key,{part,type,increase,itemCode:item.itemCode,itemName:name});
       }
     }
     if(!updates.size) {
@@ -70,6 +72,8 @@
       additions.push(item);
     }
     if(!additions.length) {
+      localStorage.setItem('closetOwnedItems', JSON.stringify(items));
+      window.dispatchEvent(new Event('puretomo:owned-changed'));
       status.textContent = '取り込んだ所持品 '+items.length+'件を照合しました。所持最大値の更新はありません。'+
         '（登録一覧は部位とパラメータごとの最大値に集約されます）';
       return {items:items.length,changes:0};
@@ -83,12 +87,13 @@
         row.type1 === item.type && (!row.type2 || row.type2 === 'なし'));
       const record={
         partText:item.part, type1:item.type, type2:'なし',
-        increase:String(item.increase),registeredAt:new Date().toISOString(),
+        increase:String(item.increase),itemCode:item.itemCode,itemName:item.itemName,registeredAt:new Date().toISOString(),
       };
       if(index>=0) existing[index]=record; else existing.push(record);
       changes++;
     }
     localStorage.setItem('avatarList', JSON.stringify(existing));
+    localStorage.setItem('closetOwnedItems', JSON.stringify(items));
     window.dispatchEvent(new Event('puretomo:owned-changed'));
     window.refreshOriginalOwned?.();
     status.textContent = method+'：所持品 '+items.length+'件を照合し、'+changes+
