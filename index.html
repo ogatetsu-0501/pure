@@ -1776,16 +1776,22 @@ p, li { color: #deddd9; }
         const name = rawItem?.itemName || `アイテムコード ${code}`;
         const match = name.match(/^【([^+】]+)\+([^】]+)】/);
         const label = match?.[1]?.replace(/[／⁄]/g,'/').trim().toUpperCase() || '';
-        const knownCombos = {
-          'AT/DF':['ATK','DEF'], 'P/I':['POW','INT'], 'P/L':['POW','LUK'],
-          'S/L':['SPD','LUK'], 'V/L':['VIT','LUK'],
-          ALL:['POW','INT','SPD','VIT','LUK'],
+        // 複合効果の略号を自動展開します。未知の略号は誤変換せず除外します。
+        const statusAliases = {
+          P: 'POW', I: 'INT', S: 'SPD', V: 'VIT', L: 'LUK',
+          AT: 'ATK', DF: 'DEF',
+          POW: 'POW', INT: 'INT', SPD: 'SPD', VIT: 'VIT', LUK: 'LUK',
+          ATK: 'ATK', DEF: 'DEF', HP: 'HP', SP: 'SP',
         };
-        const types = knownCombos[label] || (label.includes('/') ? [] : [label]);
+        const statusCodes = label === 'ALL' ? ['P', 'I', 'S', 'V', 'L'] : label.split('/');
+        const types = statusCodes.map(code => statusAliases[code] || (!label.includes('/') ? code : '')).filter(Boolean);
         const value = numeric(match?.[2]);
         return types.filter(Boolean).map(type => ({
           code, name, type, value,
-          part: parts.get(rawItem?.parts) || rawItem?.parts || 'その他',
+          // マスターに部位がない場合は、アイテムコード先頭の最長一致から補完します。
+          part: parts.get(rawItem?.parts) || rawItem?.parts ||
+            [...parts.entries()].filter(([prefix]) => code.startsWith(prefix))
+              .sort((a, b) => b[0].length - a[0].length)[0]?.[1] || 'その他',
           gender: rawItem?.itemGender || 'A',
         }));
       }),
@@ -1849,23 +1855,34 @@ p, li { color: #deddd9; }
     const settingIncrease = getSettings('filterInc');
     const settingOperator = getSettings('filterIncOp', 'gte');
     state.ownedBest = readOwnedBest();
-    state.filtered = state.listings.filter(listing => {
-      if (gender && listing.items.some(item => item.gender && item.gender !== 'A' && item.gender !== gender)) return false;
-      return listing.items.some(item => {
-        if (keyword && !`${item.name} ${item.code} ${item.type}+${item.value}`.normalize('NFKC').toLocaleLowerCase('ja').includes(keyword)) return false;
-        if (type && item.type !== type) return false;
-        if (part && item.part !== part) return false;
-        if (settingPart && item.part !== settingPart) return false;
-        if (settingType && item.type !== settingType) return false;
-        if (settingIncrease) {
+    // バザー内でも条件に合う効果だけを残します。
+    // 男性用・共通を選んだ場合は女性専用を、女性用・共通なら男性専用を表示しません。
+    state.filtered = state.listings.map(listing => {
+      const items = listing.items.filter(item => {
+        const isGenderMatch = !gender || item.gender === 'A' || item.gender === gender;
+        if (!isGenderMatch) return false;
+
+        const normalizedText = `${item.name} ${item.code} ${item.type}+${item.value}`
+          .normalize('NFKC').toLocaleLowerCase('ja');
+        const isKeywordMatch = !keyword || normalizedText.includes(keyword);
+        const isTypeMatch = !type || item.type === type;
+        const isPartMatch = !part || item.part === part;
+        const isSettingPartMatch = !settingPart || item.part === settingPart;
+        const isSettingTypeMatch = !settingType || item.type === settingType;
+        if (!isKeywordMatch || !isTypeMatch || !isPartMatch ||
+            !isSettingPartMatch || !isSettingTypeMatch) return false;
+
+        if (!!settingIncrease) {
           const goal = Number(settingIncrease);
-          if (settingOperator === 'gte' && item.value < goal) return false;
-          if (settingOperator === 'lte' && item.value > goal) return false;
-          if (settingOperator === 'eq' && item.value !== goal) return false;
+          const isAtLeast = settingOperator === 'gte' && item.value >= goal;
+          const isAtMost = settingOperator === 'lte' && item.value <= goal;
+          const isEqual = settingOperator === 'eq' && item.value === goal;
+          if (!isAtLeast && !isAtMost && !isEqual) return false;
         }
         return true;
       });
-    });
+      return { ...listing, items };
+    }).filter(listing => !!listing.items.length);
     const comparator = {
       new: (a,b) => b.endTime - a.endTime,
       deadline: (a,b) => a.endTime - b.endTime,
@@ -1951,8 +1968,18 @@ p, li { color: #deddd9; }
       ]);
       if (!Array.isArray(bazaar) || !Array.isArray(schema) || !Array.isArray(additional)) throw new Error('公開データの形式が不正です');
       const parts = new Map(labels.split(/\r?\n/).slice(1).map(line=>line.split(',').map(x=>x.trim())).filter(x=>x.length>=2));
-      // 正式マスターを最後に配置し、補助データの空欄で部位・名称・性別を上書きしない。
-      const lookup = new Map([...additional,...schema].filter(item=>item?.itemCode).map(item=>[item.itemCode,item]));
+      // 一般マスターの情報を優先し、不足項目だけ補助マスターから補います。
+      const lookup = new Map(additional.filter(item => !!item?.itemCode).map(item => [item.itemCode, item]));
+      for (const item of schema) {
+        if (!item?.itemCode) continue;
+        const fallback = lookup.get(item.itemCode);
+        lookup.set(item.itemCode, {
+          itemCode: item.itemCode,
+          itemName: item.itemName || fallback?.itemName || '',
+          parts: item.parts || fallback?.parts || '',
+          itemGender: item.itemGender || fallback?.itemGender || 'A',
+        });
+      }
       state.listings = bazaar.map(row=>buildListing(row,lookup,parts));
       state.source = true;
       updateFilterOptions(state.listings);
