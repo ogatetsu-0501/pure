@@ -43,13 +43,13 @@ test('新作アバターだけのバザーも取得できる', async () => {
     },
   };
   const result = await collectBazaarData({
-    schema: structuredClone(SAMPLE_SCHEMA),
+    schema: [{ itemCode: 'OLD', itemName: '【POW+3】旧商品', parts: 'WA', itemGender: 'M' }],
     statusesCsv: 'type\nPOW\nINT\n',
     labelsCsv: 'code,label\nWA,武器\n',
     maleHistory: {}, femaleHistory: {},
-    tradeData: { serverTime: SAMPLE_TIME, result: { itemList: [{ itemCode: 'NEW2026' }] } },
+    tradeData: { serverTime: '2026-10-29T12:00:00.000Z', result: { itemList: [{ itemCode: 'NEW2026' }] } },
     loadDetail: async () => detail,
-    now: new Date(SAMPLE_TIME),
+    now: new Date('2026-10-29T12:00:00.000Z'),
   });
   assert.equal(result['bazzarList.json'].length, 1);
   assert.equal(result['itemCodeSchema.json'].at(-1).itemCode, 'NEW2026');
