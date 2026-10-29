@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+<meta property="og:title"        content="Puretomoアシスタント for チョコットランド">
+<meta property="og:type"         content="website">
+<meta property="og:url"          content="https://ogatetsu-0501.github.io/pure/">
+<meta property="og:image"        content="https://ogatetsu-0501.github.io/pure/file_0000000078ac61f7b83750d02fab108a.png">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:description"  content="チョコットランド向けに最適化されたPuretomoアシスタント。所持アバター登録や販売アバター検索、価格履歴グラフ機能を提供。">
+
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:site"        content="@あなたのTwitterアカウント">
+<meta name="twitter:title"       content="Puretomoアシスタント for チョコットランド">
+<meta name="twitter:description" content="チョコットランド向けに最適化されたPuretomoアシスタント。所持アバター登録や販売アバター検索、価格履歴グラフ機能を提供。">
+<meta name="twitter:image"       content="https://ogatetsu-0501.github.io/pure/file_0000000078ac61f7b83750d02fab108a.png">
+<!-- ── ここまで OGP ── -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HEVBVL4Z7N"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('js', new Date());
+  
+      // あなたの計測ID
+      gtag('config', 'G-HEVBVL4Z7N');
+    </script>
+    <!-- Favicon -->
+<link rel="icon" type="image/png" href="No_001~2.png" sizes="32x32">
+<link rel="shortcut icon" href="No_001~2.png">
+    <title>Puretomoアシスタント for チョコットランド</title>
+  <!-- 検索結果の説明文 -->
+  <meta name="description" content="チョコットランド向けに最適化されたPuretomoアシスタント。所持アバター登録や販売アバター検索、価格履歴グラフ機能を提供。">
+
+  <!-- OGP（Facebook/Twitter など向け）-->
+  <meta property="og:title"        content="Puretomoアシスタント for チョコットランド">
+  <meta property="og:description"  content="チョコットランド向けに最適化されたPuretomoアシスタント。所持アバター登録や販売アバター検索、価格履歴グラフ機能を提供。">
+  <meta property="og:url"          content="https://ogatetsu-0501.github.io/pure/">
+  <meta property="og:image"        content="https://ogatetsu-0501.github.io/pure/file_0000000078ac61f7b83750d02fab108a.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <!-- …その他必要なOGPタグ… -->
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f2f2f2;
+        color: #333;
+      }
+
+      /* ヘッダー */
+      header {
+        display: flex;
+        align-items: center;
+        background: #ffb300;
+        color: #fff;
+        padding: 16px 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .hamburger {
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 16px;
+      }
+      header h1 {
+        font-size: 1.2em;
+        margin: 0;
+      }
+
+      /* サイドバー */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 240px;
+        height: 100vh;
+        padding-top: 64px;
+        background: #333;
+        color: #fff;
+        transition: left 0.3s ease;
+        z-index: 1500;
+      }
+      .sidebar ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .sidebar li {
+        padding: 12px 16px;
+        margin: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .sidebar li:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* メインコンテナ */
+      .main-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 64px);
+        overflow: hidden;
+        transition: margin-left 0.3s ease;
+        padding: 24px;
+      }
+
+      /* パネル共通 */
+      .left-panel,
+      .right-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+      }
+      .left-panel {
+        transform: translateX(0);
+      }
+      .right-panel {
+        transform: translateX(100%);
+      }
+
+      /* ナビ切替ボタン */
+      .nav-btn {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        background: rgba(0, 0, 0, 0.3);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1600;
+        transition: background 0.2s;
+      }
+      .nav-btn:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
+      .nav-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: #fff;
+      }
+      #switchToLeft {
+        left: 16px;
+        display: none;
+      }
+      #switchToRight {
+        right: 16px;
+      }
+
+      /* フォーム */
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #555;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="number"],
+      .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #ffb300;
+      }
+      button {
+        padding: 10px 18px;
+        background: #ffb300;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      button:hover {
+        background: #e6a100;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: default;
+      }
+
+      /* ポップステータス */
+      .pop-status-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pop-status-group label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffe082;
+        padding: 6px 12px;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        font-size: 0.9em;
+        color: #555;
+      }
+      .pop-status-group input {
+        margin-left: 8px;
+        accent-color: #ff6f00;
+      }
+
+      /* テーブル */
+      .scrollable-table-container {
+        margin-top: 24px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 6;
+        background: #fafafa;
+      }
+      thead th {
+        padding: 12px 16px;
+        border: 1px solid #e0e0e0;
+        white-space: nowrap;
+        padding-right: 24px;
+      }
+      thead th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 8;
+      }
+      tbody td {
+        padding: 12px 16px;
+        border: 1px solid #e0e0e0;
+        background: #fff;
+      }
+      tbody td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 7;
+        background: #fff;
+      }
+      th.sort-asc::after {
+        content: " ▲";
+      }
+      th.sort-desc::after {
+        content: " ▼";
+      }
+
+      /* モーダル */
+      #modalWindow {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60vw;
+        max-width: 60vw;
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        z-index: 1700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      #modalContent {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+      }
+      .modalItem {
+        flex: 0 0 auto;
+        background: #f7f7f7;
+        padding: 12px;
+        border-radius: 4px;
+        text-align: center;
+      }
+      .modalItem img {
+        max-width: 80px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+      }
+      #closeModal {
+        margin-top: 16px;
+        width: 100%;
+        background: #e53935;
+      }
+
+      /* グラフセクション */
+      #graphSection {
+        display: none;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        margin-top: 24px;
+      }
+
+      /* レスポンシブ入力切替 */
+      #partInput,
+      #partsList,
+      #type1Input,
+      #type1List,
+      #type2Input,
+      #type2List {
+        display: inline-block;
+        width: calc(100% - 24px);
+      }
+      #partSelect,
+      #type1Select,
+      #type2Select {
+        display: none;
+        width: 100%;
+      }
+      @media (min-width: 768px) {
+        /* 入力欄と datalist は隠す */
+        #partInput,
+        #partsList,
+        #type1Input,
+        #type1List,
+        #type2Input,
+        #type2List {
+          display: none;
+        }
+        /* select を幅100%のインラインブロックにする */
+        #partSelect,
+        #type1Select,
+        #type2Select {
+          display: inline-block;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 767px) {
+        /* datalist を非表示にして余計な隙間をなくすよ */
+        #partsList,
+        #type1List,
+        #type2List {
+          display: none;
+          width: 0;
+          padding: 0;
+          margin: 0;
+        }
+
+        /* 入力欄をブロック表示にして、幅100%にするよ */
+        #partInput,
+        #type1Input,
+        #type2Input {
+          display: block;
+          width: 100%;
+          margin-bottom: 12px; /* 下に余白をつけて見やすく */
+        }
+      }
+/* デフォルトは非表示 */
+#admax-side { display: none; }
+
+/* スマホ時は画面下固定 */
+@media (max-width: 767px) {
+  #admax-side {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* 高さは広告の実寸に合わせて調整 */
+    height: 50px;
+    z-index: 1500;
+    background: transparent;
+    text-align: center;
+  }
+}
+
+/* PC時は右サイド固定 */
+@media (min-width: 768px) {
+  #admax-side {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 600px;
+    z-index: 1500;
+    background: transparent;
+  }
+}
+/* スマホ時（767px 以下）はヘッダーを広告分だけ下にずらす */
+      /* スマホ時に広告の高さ分、headerとmainを下にずらす */
+@media (max-width: 767px) {
+  header {
+    margin-top: 50px;  /* ← ヘッダー全体を下に */
+  }
+  .main-container {
+    margin-top: 50px;  /* ← メイン部分も一緒に下に */
+  }
+  #admax-side {
+    z-index: 2000;     /* ← 確実に上に出すための指定 */
+  }
+}
+    </style>
+  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+  </head>
+ 
+  <body>
+    <header>
+      <div class="hamburger" id="hamburgerBtn">&#9776;</div>
+      <h1>Puretomoアシスタント for チョコットランド</h1>
+    </header>
+
+  <div id="admax-side">
+  </div>
+    <div id="modalWindow">
+      <div id="modalContent"></div>
+      <button id="closeModal">閉じる</button>
+    </div>
+
+    <button id="switchToLeft" class="nav-btn" title="前へ">
+      <svg viewBox="0 0 24 24">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <button id="switchToRight" class="nav-btn" title="次へ">
+      <svg viewBox="0 0 24 24">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+      </svg>
+    </button>
+
+    <div class="main-container" id="mainContainer">
+      <div class="sidebar" id="sidebar">
+        <ul>
+          <li data-target="readme">Readme</li>
+          <li data-target="avatarForm">所持アバター登録</li>
+          <li data-target="settings">設定</li>
+          <li data-target="tradeSearch">販売アバター検索</li>
+          <li data-target="graphSection">価格履歴グラフ</li>
+        </ul>
+      </div>
+
+      <div class="left-panel" id="leftPanel">
+        <div id="readme">
+          <!-- 小学生向け：ページ全体の使い方説明 -->
+          <h2>使い方</h2>
+          <p>左上のハンバーガーメニューから各ページに飛べます。</p>
+
+          <!-- 所持アバター追加 -->
+          <h3>■ 所持アバター登録</h3>
+          <ul>
+            <li>
+              自分の持っているアバターのパラメータを登録できます。
+              特典アバターや販売されなさそうなパラメータは登録できません。
+            </li>
+            <li>
+              ⚠️ 1点で複数パラメータ上昇するものは未対応です。
+              その場合は「2点」として登録してください。
+            </li>
+            <li>
+              各パーツ別に最大値を1件登録できます。新しく登録するとき最大値でない場合はエラーが出ます。
+              最大値を登録した時、既存のデータは上書きされます。
+            </li>
+            <li>
+              追加したアバターは、右側の <code>＞</code> ボタンを押すと
+              「追加されたアバター一覧」で確認できます。
+            </li>
+          </ul>
+
+          <!-- 設定 -->
+          <h3>■ 設定</h3>
+          <ul>
+            <li>ここでは「販売アバター検索」で使う設定を行います。</li>
+            <li>
+              「アバター性別」を選ぶと、選択していない性別のアバターは自動で省かれます。
+              （購入できないため）
+            </li>
+            <li>
+              「購入希望ステータス」では、検索結果に表示する
+              アバターの種類を選択できます。
+            </li>
+            <li>
+              「アイテム列を表示」にチェックを入れると、
+              購入対象のアバターが１行ずつ表示されます。
+            </li>
+            <li>
+              パーツ / 種類 / 上昇値を選択すると、
+              販売アバター検索と追加されたアバター一覧がフィルタされます。
+            </li>
+            
+          </ul>
+
+          <!-- 販売アバター検索 -->
+          <h3>■ 販売アバター検索</h3>
+          <ul>
+            <li>
+              現在販売されているアバターを一覧表示できます。
+              「設定」で選んだ性別によって表示が変化します。
+            </li>
+            <li>
+              表の見出し（１行目セル）をクリックすると、昇順／降順で並び替え可能です。
+            </li>
+            <li>
+              昇順時は <code>(HC/差分)</code> が小さいものが上に来ます。 →
+              １ステータスを上げるのに必要な金額が少ない順
+            </li>
+            <li>
+              差分は、自分が登録したアバターの最大パラメータを更新可能なものを表示します。
+              （複数ステータス未対応）
+            </li>
+            <li>
+              「アイテム列」に表示されるパラメータは、購入対象アバターの生値です。
+            </li>
+            <li>
+              「詳細」ボタンを押すと、所持アバターの最大値との差分を
+              画像付きでポップアップ表示します。
+            </li>
+            <li>
+              購入済ボタンを押すと、その行のアバターを所持アバターとして登録します。
+              購入後に押すと手動登録が不要になります。
+            </li>
+
+          </ul>
+
+          <!-- 価格履歴グラフ -->
+          <h3>■ 価格履歴グラフ</h3>
+          <ul>
+            <li>
+              「パラメータ」と「上昇値」を選択すると、
+              過去１週間の購入価格変動をグラフで確認できます。
+            </li>
+            <li>※ 性別によるフィルタリングは現在未実装です。</li>
+          </ul>
+        </div>
+
+        <div id="avatarForm" style="display: none">
+          <h2>所持アバター登録</h2>
+          <div class="form-group">
+            <label>パーツ（表示名）:</label>
+            <input
+              type="text"
+              id="partInput"
+              list="partsList"
+              placeholder="例: トップス"
+            />
+            <datalist id="partsList"></datalist>
+            <select id="partSelect"></select>
+          </div>
+          <div class="form-group">
+            <label>種類①:</label>
+            <input
+              type="text"
+              id="type1Input"
+              list="type1List"
+              placeholder="例: INT"
+            />
+            <datalist id="type1List"></datalist>
+            <select id="type1Select"></select>
+          </div>
+          <div class="form-group">
+            <label>種類②:</label>
+            <input
+              type="text"
+              id="type2Input"
+              list="type2List"
+              placeholder="（未入力可）"
+              disabled
+            />
+            <datalist id="type2List"></datalist>
+            <select id="type2Select"></select>
+          </div>
+          <div class="form-group">
+            <label>上昇値:</label>
+            <input type="number" id="valueInput" placeholder="数値を入力" />
+          </div>
+          <button id="addButton" disabled>追加</button>
+        </div>
+
+        <div id="settings" style="display: none">
+          <h2>設定</h2>
+          <div class="form-group">
+            <label>アバター性別:</label>
+            <select id="genderSelect">
+              <option value="F">女</option>
+              <option value="M">男</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>更新希望ステータス:</label>
+            <div id="updateStatusContainer" class="pop-status-group"></div>
+          </div>
+          <div class="form-group">
+            <label
+              ><input type="checkbox" id="showItemsCheckbox" />
+              アイテム列を表示</label
+            >
+          </div>
+          <div class="form-group">
+            <label>絞り込み — パーツ:</label>
+            <select id="filterPartSelect">
+              <option value="">全て</option>
+              <!-- JS で partsMapping から埋めます -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>絞り込み — 種類:</label>
+            <select id="filterTypeSelect">
+              <option value="">全て</option>
+              <!-- JS で typeOptions から埋めます -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>上昇値で絞り込む：</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="number" id="filterIncInput" placeholder="数値を入力">
+              <select id="filterIncOp" disabled>
+                <option value="gte">以上</option>
+                <option value="lte">以下</option>
+                <option value="eq">等しい</option>
+              </select>
+            </div>
+          </div>
+          <button id="saveSettingsButton">設定を保存</button>
+          <div id="settingsAdContainer"></div>
+        </div>
+
+        <div id="tradeSearch" style="display: none">
+          <h2>販売アバター検索</h2>
+          <button id="reloadTradeButton">再読み込み</button>
+          <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
+        </div>
+
+        <div id="graphSection" style="display: none">
+          <h2>価格履歴グラフ</h2>
+          <div class="form-group">
+            <label>パラメータ:</label>
+            <select id="paramSelect"></select>
+          </div>
+          <div class="form-group">
+            <label>上昇値:</label>
+            <select id="increaseSelect"></select>
+          </div>
+          <div class="form-group">
+            <label>期間:</label>
+            <select id="periodSelect">
+              <option value="7">1週間</option>
+              <option value="14">2週間</option>
+              <option value="30">1か月</option>
+              <option value="365">1年</option>
+            </select>
+          </div>
+          <button id="loadGraphButton">グラフ表示</button>
+          <div class="chart-container">
+            <canvas id="historyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel" id="rightPanel">
+        <h2>追加されたアバター一覧</h2>
+            <!-- ここからサマリー -->
+        <div id="avatarSummary" style="margin: 0 0 12px; font-weight: bold;"></div>
+    <!-- ここまでサマリー -->
+        <div class="scrollable-table-container">
+          <table id="avatarTable">
+            <thead>
+              <tr>
+                <th>パーツ</th>
+                <th>種類①</th>
+                <th>種類②</th>
+                <th>上昇値</th>
+                <th>削除</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+
+      function loadSettingsAd() {
+        const cnt = document.getElementById("settingsAdContainer");
+        if (cnt.dataset.loaded) return;     // 1回だけロード
+        cnt.dataset.loaded = "1";
+      
+        // ① action タグ
+        const adInline = document.createElement("script");
+        adInline.type = "text/javascript";
+        adInline.text = `(admaxads = window.admaxads || []).push({
+          admax_id: "abaf56c5df7973ada2bead83e0569535",
+          type: "action"
+        });`;
+        cnt.appendChild(adInline);
+      
+        // ② 非同期ライブラリロード
+        const adLib = document.createElement("script");
+        adLib.type    = "text/javascript";
+        adLib.charset = "utf-8";
+        adLib.src     = "https://adm.shinobi.jp/st/t.js";
+        adLib.async   = true;
+        cnt.appendChild(adLib);
+      }
+      
+  // ユーティリティ関数：登録データをavatarListに入れる
+  function registerAvatar(partText, type1, type2, increase) {
+    const newInc = Number(increase);
+    const now = new Date().toISOString();     // ← 追加日時
+    const idx = avatarList.findIndex(av =>
+      av.partText === partText &&
+      av.type1    === type1 &&
+      av.type2    === type2
+    );
+    if (idx !== -1) {
+      const oldInc = Number(avatarList[idx].increase);
+      if (oldInc >= newInc) {
+        alert(`${partText} ${type1}/${type2} は既存の方が大きいため登録キャンセル`);
+        return;
+      } else {
+        avatarList.splice(idx, 1);
+        alert(`${partText} ${type1}/${type2} の最大値を更新しました（古いデータを削除）`);
+      }
+    }
+    avatarList.push({
+      partText,
+      type1,
+      type2,
+      increase: String(newInc),
+      registeredAt: now           // ← ここに追加日時を格納
+    });
+    localStorage.setItem("avatarList", JSON.stringify(avatarList));
+    renderAvatarTable();
+  }
+      
+      // ① インタースティシャル(admax_id=82daded32b3c55a9ae8ab9704f1898a8)をプッシュ
+      // ② 非同期でadm.shinobi.jp/st/t.js(広告ライブラリ)をロード
+      function showInterstitialAd() {
+        // ① プッシュ用の inline スクリプトを生成
+        const pushScript = document.createElement("script");
+        pushScript.type = "text/javascript";
+        pushScript.text = `
+          (window.admaxads = window.admaxads || []).push({
+            admax_id: "82daded32b3c55a9ae8ab9704f1898a8",
+            type: "action"
+          });
+        `;
+        document.body.appendChild(pushScript);
+      
+        // ② 非同期で広告ライブラリを読み込む
+        const loader = document.createElement("script");
+        loader.src     = "https://adm.shinobi.jp/st/t.js";
+        loader.async   = true;
+        loader.charset = "utf-8";
+        document.body.appendChild(loader);
+      }
+      
+      let bagcatMapping = {},
+        partsMapping = {},
+        typeOptions = [];
+        partOrder = [];
+      let updateStatusOptions = []; // 小学生向け：ここにCSVから取ってきた順序を入れるよ
+      let avatarList = [],
+        uniqueTradeItems = [],
+        historyData = null,
+        historyChart = null;
+      const sections = [
+        "readme",
+        "avatarForm",
+        "settings",
+        "tradeSearch",
+        "graphSection",
+      ];
+
+      function fetchCsv(url) {
+        return fetch(url)
+          .then((r) => r.text())
+          .then((txt) =>
+            txt
+              .trim()
+              .split("\n")
+              .map((l) => l.split(",").map((c) => c.trim()))
+          )
+          .catch(() => []);
+      }
+      // ——— CSVから種類リストを読み込むよ ———
+      function loadTypeOptions() {
+        return fetch("type_options.csv")
+          .then((r) => r.text())
+          .then((txt) => {
+            // 1行目ヘッダーを除いて、1列目(type)を全部取り出すよ
+            const rows = txt.trim().split("\n").slice(1);
+            // typeOptions に並べ替えず、そのまま順番どおり入れるよ
+            typeOptions = rows
+              .map((line) => line.split(",")[0].trim())
+              .filter((t) => t);
+            // updateStatusOptions にも同じリストをコピーするよ
+            updateStatusOptions = [...typeOptions];
+          })
+          .catch(() => {
+            // 失敗したら両方とも空にしておくよ
+            typeOptions = [];
+            updateStatusOptions = [];
+          });
+      }
+
+      function loadBagcatLabels() {
+        return fetchCsv("bagcat_labels.csv").then((rows) => {
+          rows.slice(1).forEach(([code, jp]) => {
+            if (code && jp) {
+              bagcatMapping[code] = jp;
+              partsMapping[jp] = code;
+              partOrder.push(jp);
+            }
+          });
+        });
+      }
+
+      window.addEventListener("load", () => {
+        showInterstitialAd();
+        // ────────── 性別でヒストリーファイルを選ぶブロック ──────────
+        // ② ローカルストレージから性別を取ってくるよ（"F" または "M"）
+        const gender = localStorage.getItem("avatarGender");
+        // ③ デフォルトは buzzerHistory.json（性別未設定時）
+        let historyFile = "malebuzzerHistory.json";
+        // ④ 女性なら femalebuzzerHistory.json、男性なら malebuzzerHistory.json に切り替えるよ
+        if (gender === "F") {
+          historyFile = "femalebuzzerHistory.json";
+        } else if (gender === "M") {
+          historyFile = "malebuzzerHistory.json";
+        }
+        Promise.all([
+          loadBagcatLabels(),
+          loadTypeOptions(),
+          fetch(historyFile).then((r) => r.json()),
+        ]).then(([, , hData]) => {
+          historyData = hData;
+          const ps = document.getElementById("paramSelect");
+
+          ps.innerHTML = '<option value="">選択してください</option>';
+          Object.keys(historyData).forEach((p) => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            ps.appendChild(opt);
+          });
+                    // ■――――■ 絞り込み演算子の切り替え ■――――■
+          const incInput = document.getElementById("filterIncInput");
+          const incOpSel = document.getElementById("filterIncOp");
+
+          incInput.addEventListener("input", () => {
+            if (incInput.value.trim() !== "") {
+              incOpSel.disabled = false;
+              incOpSel.value    = "gte";  // 値が変わるたび「以上」にリセット
+            } else {
+              incOpSel.disabled = true;
+            }
+          });
+          generateSettingsUI();
+        });
+
+        const last = localStorage.getItem("lastSection") || "readme";
+        showSection(last);
+
+        document.getElementById("switchToLeft").style.display = "none";
+        document.getElementById("switchToRight").style.display = "block";
+
+        loadBagcatLabels().then(() => {
+          populatePartsOptions();
+          populateType1Options();
+          const s = localStorage.getItem("avatarList");
+          if (s) {
+            avatarList = JSON.parse(s);
+            renderAvatarTable();
+          }
+        });
+      });
+
+      function showSection(id) {
+        sections.forEach((sec) => {
+          document.getElementById(sec).style.display =
+            sec === id ? "block" : "none";
+        });
+        localStorage.setItem("lastSection", id);
+        if (id === "tradeSearch") logItemCodes();
+      }
+
+      document.getElementById("hamburgerBtn").addEventListener("click", () => {
+        const sb = document.getElementById("sidebar"),
+          mc = document.getElementById("mainContainer"),
+          sl = document.getElementById("switchToLeft");
+        if (sb.style.left === "0px") {
+          sb.style.left = "-260px";
+          mc.style.marginLeft = "0";
+          sl.style.left = "0";
+        } else {
+          sb.style.left = "0";
+          mc.style.marginLeft = "240px";
+          sl.style.left = "240px";
+        }
+      });
+
+      document.querySelectorAll(".sidebar li").forEach((li) =>
+        li.addEventListener("click", () => {
+          const tgt = li.getAttribute("data-target");
+          showInterstitialAd();
+          showSection(tgt);
+          if (tgt === "settings") loadSettingsAd();
+          gtag('event', 'select_section', { section_name: tgt });
+          document.getElementById("sidebar").style.left = "-260px";
+          document.getElementById("mainContainer").style.marginLeft = "0";
+          document.getElementById("switchToLeft").style.left = "0";
+        })
+      );
+
+      document.getElementById("switchToRight").addEventListener("click", () => {
+        document.getElementById("leftPanel").style.transform =
+          "translateX(-100%)";
+        document.getElementById("rightPanel").style.transform = "translateX(0)";
+        document.getElementById("switchToRight").style.display = "none";
+        document.getElementById("switchToLeft").style.display = "block";
+        gtag('event', 'view_added_avatar_list');
+      });
+
+      document.getElementById("switchToLeft").addEventListener("click", () => {
+        document.getElementById("leftPanel").style.transform = "translateX(0)";
+        document.getElementById("rightPanel").style.transform =
+          "translateX(100%)";
+        document.getElementById("switchToLeft").style.display = "none";
+        document.getElementById("switchToRight").style.display = "block";
+      });
+
+      function populatePartsOptions() {
+        const dl = document.getElementById("partsList"),
+          sel = document.getElementById("partSelect");
+        dl.innerHTML = "";
+        sel.innerHTML = "<option value=''>選択してください</option>";
+        Object.keys(partsMapping).forEach((jp) => {
+          dl.innerHTML += `<option value="${jp}">`;
+          sel.innerHTML += `<option value="${jp}">${jp}</option>`;
+        });
+      }
+
+      function populateType1Options() {
+        // 小学生向け：リストと select をゼロクリアして
+        const dl = document.getElementById("type1List"),
+          sel = document.getElementById("type1Select");
+        dl.innerHTML = "";
+        sel.innerHTML = "<option value=''>選択してください</option>";
+
+        // 小学生向け：CSVで読んだ順番で選択肢を並べるよ
+        typeOptions.forEach((t) => {
+          dl.innerHTML += `<option value="${t}">`;
+          sel.innerHTML += `<option value="${t}">${t}</option>`;
+        });
+      }
+
+      function updateType2Options(skip) {
+        const dl = document.getElementById("type2List"),
+          sel = document.getElementById("type2Select");
+        dl.innerHTML = "<option value=''></option>";
+        sel.innerHTML = "<option value=''>選択してください</option>";
+        typeOptions.forEach((t) => {
+          if (t !== skip) {
+            dl.innerHTML += `<option value="${t}">`;
+            sel.innerHTML += `<option value="${t}">${t}</option>`;
+          }
+        });
+      }
+
+      function generateSettingsUI() {
+        const g = localStorage.getItem("avatarGender");
+        if (g) document.getElementById("genderSelect").value = g;
+
+        const cont = document.getElementById("updateStatusContainer");
+        const sav = JSON.parse(localStorage.getItem("updateStatus") || "[]");
+        cont.innerHTML = "";
+
+        // 小学生向け：CSVの順番に合わせてチェックボックスを作るよ
+        updateStatusOptions.forEach((t) => {
+          const checked = sav.includes(t) ? "checked" : "";
+          cont.innerHTML += `<label>${t}<input type="checkbox" value="${t}" ${checked}></label>`;
+        });
+
+        const st = localStorage.getItem("showItems");
+        document.getElementById("showItemsCheckbox").checked =
+          st !== null ? JSON.parse(st) : window.innerWidth >= 768;
+
+            // --- 絞り込み用項目に選択肢をセット ---
+        const fp = document.getElementById("filterPartSelect");
+        const ft = document.getElementById("filterTypeSelect");
+        // partsMapping は code→日本語マッピング
+        Object.keys(partsMapping).forEach(jp => {
+          const o = document.createElement("option");
+          o.value = jp; o.textContent = jp;
+          fp.appendChild(o);
+        });
+        typeOptions.forEach(t => {
+          const o = document.createElement("option");
+          o.value = t; o.textContent = t;
+          ft.appendChild(o);
+      });
+
+       // 保存済みの絞り込み値を復元
+        fp.value = localStorage.getItem("filterPart") || "";
+        ft.value = localStorage.getItem("filterType") || "";
+        document.getElementById("filterIncInput").value = localStorage.getItem("filterInc") || "" 
+      }
+
+      document
+        .getElementById("saveSettingsButton")
+        .addEventListener("click", () => {
+          localStorage.setItem(
+            "avatarGender",
+            document.getElementById("genderSelect").value
+          );
+          const ck = Array.from(
+            document.querySelectorAll("#updateStatusContainer input:checked")
+          ).map((cb) => cb.value);
+          localStorage.setItem("updateStatus", JSON.stringify(ck));
+          localStorage.setItem(
+            "showItems",
+            JSON.stringify(document.getElementById("showItemsCheckbox").checked)
+          );
+          localStorage.setItem("filterPart", document.getElementById("filterPartSelect").value);
+          localStorage.setItem("filterType", document.getElementById("filterTypeSelect").value);
+          localStorage.setItem("filterInc", document.getElementById("filterIncInput").value.trim());
+          localStorage.setItem("filterIncOp", document.getElementById("filterIncOp").value);
+          renderAvatarTable();
+
+          alert("設定を保存しました。");
+        });
+
+      const partInput = document.getElementById("partInput"),
+        partSelect = document.getElementById("partSelect"),
+        type1Input = document.getElementById("type1Input"),
+        type1Select = document.getElementById("type1Select"),
+        type2Input = document.getElementById("type2Input"),
+        type2Select = document.getElementById("type2Select"),
+        valueInput = document.getElementById("valueInput"),
+        addButton = document.getElementById("addButton"),
+        avatarTableBody = document.querySelector("#avatarTable tbody");
+
+      function checkInput() {
+        const p = partInput.value.trim() || partSelect.value.trim(),
+          t1 = type1Input.value.trim() || type1Select.value.trim();
+        addButton.disabled = !(
+          p !== "" &&
+          t1 !== "" &&
+          valueInput.value.trim() !== "" &&
+          !isNaN(valueInput.value)
+        );
+      }
+
+      [
+        partInput,
+        partSelect,
+        type1Input,
+        type1Select,
+        type2Input,
+        type2Select,
+        valueInput,
+      ].forEach((el) => el.addEventListener("input", checkInput));
+
+      type1Input.addEventListener("change", () => {
+        const v = type1Input.value.trim();
+        type2Input.disabled = !v;
+        type2Select.disabled = !v;
+        type2Input.value = "";
+        type2Select.value = "";
+        updateType2Options(v);
+        checkInput();
+      });
+      type1Select.addEventListener("change", () => {
+        const v = type1Select.value.trim();
+        type2Input.disabled = !v;
+        type2Select.disabled = !v;
+        type2Input.value = "";
+        type2Select.value = "";
+        updateType2Options(v);
+        checkInput();
+      });
+
+      addButton.addEventListener("click", function() {
+        // 入力値を取得
+        const part   = partInput.value.trim()  || partSelect.value.trim();
+        const type1  = type1Input.value.trim() || type1Select.value.trim();
+        const type2  = type2Input.value.trim() || type2Select.value.trim() || "なし";
+        const newInc = Number(valueInput.value.trim());
+      
+        // 同一パーツ・種類の既存エントリーを探す
+        const idx = avatarList.findIndex(av =>
+          av.partText === part &&
+          av.type1    === type1 &&
+          av.type2    === type2
+        );
+      
+        if (idx !== -1) {
+          const oldInc = Number(avatarList[idx].increase);
+          if (oldInc >= newInc) {
+            alert("最大値ではないため登録できません");
+            return;  // ここでハンドラを抜けるので安全です
+          } else {
+            alert("最大値を更新したため過去のアバターを削除します");
+            avatarList.splice(idx, 1);  // 古い方を削除
+          }
+        }
+      
+        // 新規登録
+        avatarList.push({
+          partText: part,
+          type1:    type1,
+          type2:    type2,
+          increase: String(newInc),
+          registeredAt: new Date().toISOString()
+        });
+        localStorage.setItem("avatarList", JSON.stringify(avatarList));
+        renderAvatarTable();
+      
+        // フォームクリア
+        partInput.value  = "";
+        partSelect.value = "";
+        type1Input.value = "";
+        type1Select.value = "";
+        type2Input.value = "";
+        type2Select.value = "";
+        valueInput.value = "";
+        type2Input.disabled  = true;
+        type2Select.disabled = true;
+        addButton.disabled    = true;
+      });
+      
+      function renderAvatarTable() {
+            // --- サマリー用：type1/type2 両方の合計上昇値を集計 ---
+            const sumByType = {};
+            avatarList.forEach(av => {
+              const inc = Number(av.increase);
+              [av.type1, av.type2].forEach(t => {
+                if (t && t !== 'なし') {
+                  sumByType[t] = (sumByType[t] || 0) + inc;
+                }
+              });
+            });
+
+        // --- サマリー要素に表示 ---
+        const summaryEl = document.getElementById('avatarSummary');
+        summaryEl.textContent = Object.entries(sumByType)
+          .map(([type, sum]) => `${type}: ${sum}`)
+          .join('　|　');  // 好きな区切り文字でOK
+        // ① ローカルストレージから絞り込み条件を取得
+        const fPart = localStorage.getItem("filterPart") || "";
+        const fType = localStorage.getItem("filterType") || "";
+        const fIncRaw = localStorage.getItem("filterInc") || "";
+        const fInc = fIncRaw !== "" ? Number(fIncRaw) : null;
+        const fOp     = localStorage.getItem("filterIncOp") || "gte";
+      
+        // ② テーブルをクリア
+        avatarTableBody.innerHTML = "";
+          // ② 並び替え：パーツ→種類①→種類② の優先度でソート
+          const sortedList = avatarList.slice().sort((a, b) => {
+            const pa = partOrder.indexOf(a.partText);
+            const pb = partOrder.indexOf(b.partText);
+            if (pa !== pb) return pa - pb;
+        
+            const t1a = typeOptions.indexOf(a.type1);
+            const t1b = typeOptions.indexOf(b.type1);
+            if (t1a !== t1b) return t1a - t1b;
+        
+            const t2a = typeOptions.indexOf(a.type2);
+            const t2b = typeOptions.indexOf(b.type2);
+            return t2a - t2b;
+          });
+        // ③ avatarList をループして、絞り込み条件に合うものだけ描画
+        sortedList.forEach((av, idx) => {
+          const inc = Number(av.increase);
+          // ▲ 新規：上昇値フィルタの判定
+          let incMatch = true;
+          if (fInc !== null) {
+            if (fOp === "gte") incMatch = inc >= fInc;
+            else if (fOp === "lte") incMatch = inc <= fInc;
+            else if (fOp === "eq")  incMatch = inc === fInc;
+          }
+
+          if (
+            (!fPart || av.partText === fPart) &&
+            (!fType || av.type1    === fType) &&
+            incMatch  // ▼ ここを fInc===null || Number(av.increase)===fInc から置き換え
+          ) {
+            const tr = document.createElement("tr");
+            ["partText","type1","type2","increase"].forEach(key => {
+              const td = document.createElement("td");
+              td.textContent = av[key];
+              tr.appendChild(td);
+            });
+            // 削除ボタン
+            const tdDel = document.createElement("td");
+            tdDel.innerHTML = `<button>削除</button>`;
+            tdDel.firstChild.addEventListener("click", () => {
+              // ソート前の avatarList 内の実際のインデックスを探す
+              const origIdx = avatarList.findIndex(item =>
+                item.partText === av.partText &&
+                item.type1    === av.type1 &&
+                item.type2    === av.type2 &&
+                item.increase === av.increase
+              );
+              if (origIdx !== -1) {
+                avatarList.splice(origIdx, 1);
+                localStorage.setItem("avatarList", JSON.stringify(avatarList));
+                renderAvatarTable();
+              }
+            });
+            tr.appendChild(tdDel);
+          
+            avatarTableBody.appendChild(tr);
+          }
+        });
+      }
+      
+      document
+        .getElementById("reloadTradeButton")
+        .addEventListener("click", () => {
+          // 広告を表示してから、検索処理を呼び出す
+          showInterstitialAd();
+          logItemCodes();
+        });
+      // 小学生向け：販売アバター検索のデータを読んでテーブルを作る関数だよ
+      function logItemCodes() {
+        Promise.all([
+          loadBagcatLabels(),
+          fetch("bazzarList.json").then((r) => r.json()),
+          fetch("itemCodeSchema.json").then((r) => r.json()),
+          fetch("itemAnother.json").then((r) => r.json()),
+        ])
+          .then(([, bData, schema, another]) => {
+            // 2. schema の中身を日本語にしてtypeとparamも取ってくるよ
+            const regex = /^【([^+]+)\+([^】]+)】/;
+            schema.forEach((e) => {
+              const m = regex.exec(e.itemName);
+              e.type = m ? m[1] : "";
+              e.param = m ? parseInt(m[2].replace(/％/g, ""), 10) : 0;
+              e.parts = bagcatMapping[e.parts] || e.parts; // コード→日本語
+            });
+
+            // 3. another の parts も同じく日本語にするよ
+            another.forEach((e) => {
+              e.parts = bagcatMapping[e.parts] || e.parts;
+            });
+
+            // 4. 両方をくっつけておくよ
+            const combined = schema.concat(another);
+
+            // 5. 重複しない販売データだけ集めるよ
+            uniqueTradeItems = [];
+            const seen = {};
+            bData.forEach((it) => {
+              if (!seen[it.bazaarId]) {
+                seen[it.bazaarId] = true;
+                uniqueTradeItems.push(it);
+              }
+            });
+
+            // 6. 各販売データに対して差分計算をするよ
+            uniqueTradeItems.forEach((it) => {
+              // 6‑a. listingItems をコード→オブジェクトに変換
+              it.listingItems = it.listingItems.map((code) => {
+                const m = combined.find((x) => x.itemCode === code) || {};
+                return {
+                  itemCode: code,
+                  itemName: m.itemName || "",
+                  parts: m.parts || "",
+                  itemGender: m.itemGender || "",
+                  type: m.type || "",
+                  param: m.param || 0,
+                };
+              });
+
+              // 6‑b. 差分(diff)を計算するよ
+              it.listingItems.forEach((li) => {
+                const jp = bagcatMapping[li.parts] || li.parts;
+                const av = avatarList.find(
+                  (x) => x.type1 === li.type && x.partText === jp
+                );
+                let d = li.param;
+                if (av) {
+                  d = li.param - Number(av.increase);
+                  if (d < 0) d = 0;
+                }
+                li.diff = d;
+              });
+
+              // 6‑c. 種類ごとに最大のdiffを取って足し合わせるよ
+              const uniqueDiffs = {};
+              it.listingItems.forEach((li) => {
+                const key = li.type + "_" + li.parts;
+                if (
+                  uniqueDiffs[key] === undefined ||
+                  li.diff > uniqueDiffs[key]
+                ) {
+                  uniqueDiffs[key] = li.diff;
+                }
+              });
+
+              // 6‑d. typeSums にまとめるよ
+              it.typeSums = {};
+              Object.keys(uniqueDiffs).forEach((key) => {
+                const t = key.split("_")[0];
+                it.typeSums[t] = (it.typeSums[t] || 0) + uniqueDiffs[key];
+              });
+            });
+
+            // ──────────────── デバッグ① ────────────────
+            // 小学生向け：計算が終わった typeSums と HC が正しく入っているか見てね
+            uniqueTradeItems.forEach((item) => {
+            });
+
+            // 7. 性別フィルターを適用するよ
+            const gender = localStorage.getItem("avatarGender");
+            let filtered = uniqueTradeItems.filter((it) => {
+              if (!gender) return true;
+              return !it.listingItems.some(
+                (li) => li.itemGender === (gender === "F" ? "M" : "F")
+              );
+            });
+
+              // 7-b. 設定画面で選んだ絞り込み値を取得
+              const fPart = localStorage.getItem("filterPart") || "";
+              const fType = localStorage.getItem("filterType") || "";
+              const fIncRaw = localStorage.getItem("filterInc");
+              const fInc = fIncRaw ? Number(fIncRaw) : null;
+              const fOp     = localStorage.getItem("filterIncOp") || "gte";
+
+              // 7-c. listingItems の中に「全条件を満たすアイテム」がある bazaar だけ残す
+              filtered = filtered.filter(it =>
+              it.listingItems.some(li => {
+                // パーツフィルタ
+                if (fPart && li.parts !== fPart) return false;
+                // タイプフィルタ
+                if (fType && li.type  !== fType) return false;
+            
+                // ■ 新規：上昇値フィルタ（以上／以下／等しい）
+                if (fInc !== null) {
+                  if (fOp === "gte" && li.param <  fInc) return false;
+                  if (fOp === "lte" && li.param >  fInc) return false;
+                  if (fOp === "eq"  && li.param !== fInc) return false;
+                }
+            
+                return true;
+              })
+            );
+            // ──────────────── デバッグ② ────────────────
+            // 小学生向け：フィルター後に何件残ったか教えてね
+
+            // 8. テーブル用の型を決めるよ（ここで savedTypes に trim を入れる）
+            const savedTypes = JSON.parse(
+              localStorage.getItem("updateStatus") || "[]"
+            ).map((t) => t.trim()); // ← 全要素に trim をかける
+            const displayTypes = savedTypes.sort(
+              (a, b) => typeOptions.indexOf(a) - typeOptions.indexOf(b)
+            );
+            const showItems =
+              localStorage.getItem("showItems") !== null
+                ? JSON.parse(localStorage.getItem("showItems"))
+                : window.innerWidth >= 768;
+            const maxItems =
+              window.innerWidth >= 768 && showItems
+                ? Math.max(...filtered.map((it) => it.listingItems.length))
+                : 0;
+
+            // 9. HTML のヘッダー部分を作るよ
+            let html =
+              "<div class='scrollable-table-container'><table><thead><tr>" +
+              "<th>販売リンク</th><th>締切</th><th>HC</th>";
+            displayTypes.forEach((t) => (html += `<th>${t}<br>(HC/差分)</th>`));
+            if (maxItems > 0) {
+              for (let i = 0; i < maxItems; i++)
+                html += `<th>アイテム${i + 1}</th>`;
+            }
+            html += "<th>詳細</th><th>購入済</th></tr></thead><tbody>";
+
+            // 10. 各行を作っていくよ
+            filtered.forEach((item) => {
+              const end = (item.sellEndDate || "").replace(" ", "<br>");
+              const hc = Number(item.hancoin) || 0;
+              html += "<tr>";
+              html += `<td><button onclick="openLinkInNewTab('${item.bazaarId}')">販売リンク</button></td>`;
+              html += `<td>${end}</td><td>${hc}</td>`;
+
+              displayTypes.forEach((type) => {
+                // ─── キー照合デバッグ ───
+                const key = type.trim(); // 余分な空白を取り除く
+
+                const sum = item.typeSums[key] || 0;
+                const ratio = sum ? (hc / sum).toFixed(2) : "0";
+
+
+                html += `<td>${ratio}</td>`;
+              });
+
+              // アイテム列を埋めるよ
+              if (maxItems > 0) {
+                for (let j = 0; j < maxItems; j++) {
+                  if (j < item.listingItems.length) {
+                    const li = item.listingItems[j];
+                    const jp = bagcatMapping[li.parts] || li.parts;
+                    html += `<td>${jp}<br>${li.type}+${li.param}</td>`;
+                  } else {
+                    html += "<td></td>";
+                  }
+                }
+              }
+
+              html += `<td><button onclick="showModal('${item.bazaarId}')">詳細</button></td>`;
+              html += `<td><button class="purchasedBtn" data-bazaar-id="${item.bazaarId}">購入済</button></td>`;
+              html += "</tr>";
+            });
+
+            // 11. テーブルを画面に表示するよ
+            html += "</tbody></table></div>";
+            document.getElementById("tradeDataDisplay").innerHTML = html;
+            
+            // 12. ヘッダークリックでソートできるようにするよ
+            const tbl = document.querySelector("#tradeDataDisplay table");
+            if (tbl) {
+              tbl.querySelectorAll("thead th").forEach((cell, i) => {
+                cell.addEventListener("click", () => sortTableByColumn(tbl, i));
+              });
+            }
+            // ● 購入済ボタンのクリックで一括登録
+            document.querySelectorAll(".purchasedBtn").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const bazaarId = btn.dataset.bazaarId;
+                const listing = uniqueTradeItems.find((it) => it.bazaarId === bazaarId);
+                if (!listing) return;
+                listing.listingItems.forEach((li) => {
+                  const partText = bagcatMapping[li.parts] || li.parts;
+                  const type1    = li.type;
+                  const type2    = "なし";          // listingItems に type2 がなければ固定で
+                  const increase = li.param;
+                  registerAvatar(partText, type1, type2, increase);
+                });
+              });
+            });
+          })
+          .catch((e) => {
+            // 読み込みで失敗したときはエラーを表示するよ
+            document.getElementById(
+              "tradeDataDisplay"
+            ).innerHTML = `<p>読み込みエラー: ${e.message}</p>`;
+          });
+      }
+
+      function openLinkInNewTab(id) {
+        window.open(
+          `https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,
+          "_blank"
+        );
+      }
+
+      function showModal(id) {
+        const c = document.getElementById("modalContent");
+        c.innerHTML = "";
+        const it = uniqueTradeItems.find((x) => x.bazaarId === id);
+        if (!it) return;
+        it.listingItems.forEach((li) => {
+          const div = document.createElement("div");
+          div.className = "modalItem";
+          const img = document.createElement("img");
+          img.src = `https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
+          div.appendChild(img);
+          const jp = bagcatMapping[li.parts] || li.parts;
+          const p1 = document.createElement("p");
+          p1.textContent = `${jp} / 差分:${li.type}+${li.diff}`;
+          div.appendChild(p1);
+          const p2 = document.createElement("p");
+          p2.textContent = li.itemName;
+          div.appendChild(p2);
+          c.appendChild(div);
+        });
+        document.getElementById("modalWindow").style.display = "block";
+      }
+
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("modalWindow").style.display = "none";
+      });
+
+      function sortTableByColumn(table, colIndex) {
+        const tbody = table.querySelector("tbody"),
+          rows = Array.from(tbody.querySelectorAll("tr")),
+          ths = table.querySelectorAll("thead th");
+        ths.forEach((th) => th.classList.remove("sort-asc", "sort-desc"));
+
+        let dir = "asc";
+        if (table._sortCol === colIndex) {
+          dir = table._sortDir === "asc" ? "desc" : "asc";
+        }
+        table._sortCol = colIndex;
+        table._sortDir = dir;
+        ths[colIndex].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+        // 小学生向け：今クリックした列の名前を取ってきて、「締切」かどうかを見るよ
+        const headerText = ths[colIndex].textContent.trim();
+        const isDateTimeCol = headerText === "締切";
+
+        const isRatio = ths[colIndex].textContent.includes("(HC/差分)");
+        // 小学生向け：行を並べ替えるよ
+        rows.sort((rowA, rowB) => {
+          // もし「締切」列なら、ここで日付＋時刻に分けてDateオブジェクトにして比べるよ
+          if (isDateTimeCol) {
+            const parseDateTime = (cell) => {
+              // 小学生向け：<br>で日付と時刻に分けるよ
+              const parts = cell.innerHTML.split("<br>");
+              const dateStr = parts[0].trim(); // 例: "2025/04/26"
+              const timeStr = (parts[1] || "00:00").trim(); // 例: "09:07" or デフォルト "00:00"
+              // 小学生向け："/"を"-"に置き換えて"YYYY-MM-DDTHH:MM"にしてDateに変換するよ
+              return new Date(dateStr.replace(/\//g, "-") + "T" + timeStr);
+            };
+            const aVal = parseDateTime(rowA.children[colIndex]);
+            const bVal = parseDateTime(rowB.children[colIndex]);
+            // 小学生向け：昇順なら aVal−bVal、降順なら bVal−aVal を返すよ
+            return dir === "asc" ? aVal - bVal : bVal - aVal;
+          }
+
+          // それ以外の列は、もともとの数字／文字列比較ロジックを使うよ
+          const ta = rowA.children[colIndex].textContent.trim();
+          const tb = rowB.children[colIndex].textContent.trim();
+          const na = parseFloat(ta);
+          const nb = parseFloat(tb);
+          let va, vb;
+          const isRatio = ths[colIndex].textContent.includes("(HC/差分)");
+          if (!isNaN(na) && !isNaN(nb)) {
+            if (isRatio && dir === "asc") {
+              va = na === 0 ? Infinity : na;
+              vb = nb === 0 ? Infinity : nb;
+            } else {
+              va = na;
+              vb = nb;
+            }
+          } else {
+            va = ta;
+            vb = tb;
+          }
+          const cmp =
+            typeof va === "number" && typeof vb === "number"
+              ? va - vb
+              : String(va).localeCompare(String(vb));
+          return dir === "asc" ? cmp : -cmp;
+        });
+
+        // 小学生向け：並べ替えた順でまたテーブルに行を戻すよ
+        rows.forEach((r) => tbody.appendChild(r));
+      }
+
+      document.getElementById("paramSelect").addEventListener("change", () => {
+        const p = document.getElementById("paramSelect").value,
+          incSel = document.getElementById("increaseSelect");
+        incSel.innerHTML = "<option value=''>選択してください</option>";
+        if (historyData && historyData[p]) {
+          Object.keys(historyData[p]).forEach((i) => {
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = i;
+            incSel.appendChild(opt);
+          });
+        }
+      });
+    
+        // ────────────────────────────────────────
+  // 小学生向け：与えられた時刻→価格データを
+  // 小学生向け：１時間ごとの補完処理を改善した関数だよ
+// ─────────────────────────────────────────────────
+// 小学生向け：与えられた時刻→価格データを
+// １時間ごとに補完しつつ、NEW直前を途切れさせる関数だよ
+  function completeHourlyData(seriesData) {
+    const completed = {};
+
+    // parts ごとに処理するよ
+    Object.entries(seriesData).forEach(([parts, timeMap]) => {
+      // ① 生データ(ts→val/NEW)から map を作るよ
+      const rawMap = {};
+      Object.entries(timeMap).forEach(([ts, v]) => {
+        const d = new Date(ts);
+        d.setMinutes(0, 0, 0, 0);           // 分・秒を 00:00 にそろえるよ
+        const key = d.toISOString();
+        if (v !== null && typeof v === "object") {
+          // オブジェクトなら value と NEW フラグを保存
+          rawMap[key] = { value: v.value, isNew: true };
+        } else {
+          // 数字だけなら普通の値、NEW フラグは false
+          rawMap[key] = { value: v, isNew: false };
+        }
+      });
+
+      // ② キーを Date にしてソート
+      const hours = Object.keys(rawMap)
+        .map((t) => new Date(t))
+        .sort((a, b) => a - b);
+
+      if (hours.length === 0) {
+        completed[parts] = {};
+        return;
+      }
+
+      // ③ 開始と終了の時刻を決めるよ
+      const start = hours[0];
+      const end = hours[hours.length - 1];
+
+      // ④ １時間ずつ進めて補完するよ
+      const filled = {};
+      let lastVal = rawMap[start.toISOString()].value; // 最初の値を保持
+
+      for (
+        let cur = new Date(start);
+        cur <= end;
+        cur.setHours(cur.getHours() + 1)
+      ) {
+        const key = cur.toISOString();
+        if (rawMap[key]) {
+          // 実データがあるときはその値を使う
+          lastVal = rawMap[key].value;
+          filled[key] = lastVal;
+        } else {
+          // 実データがないとき
+          // 次に来る実データの時刻を探すよ
+          const future = hours.find((h) => h > cur);
+          if (future && rawMap[future.toISOString()].isNew) {
+            // もし次の実データがNEWなら、ここは空(null)にするよ
+            filled[key] = null;
+          } else {
+            // それ以外は前の値で埋めるよ
+            filled[key] = lastVal;
+          }
+        }
+      }
+
+      completed[parts] = filled;
+    });
+
+    return completed;
+  }
+// ─────────────────────────────────────────────────
+
+  // ────────────────────────────────────────
+  // 既存の「グラフ表示」ボタン処理の直前にだけ追加します
+  document
+  .getElementById("loadGraphButton")
+  .addEventListener("click", () => {
+    const p   = document.getElementById("paramSelect").value,
+          inc = document.getElementById("increaseSelect").value;
+    if (!p || !inc || !historyData) return;
+
+    // ─────────────── 期間フィルタ取得 ───────────────
+    // 小学生向け：何日前からを見るかを取得するよ
+    const days = parseInt(document.getElementById("periodSelect").value, 10);
+    // 小学生向け：現在時刻からdays日前の日時を計算するよ
+    const threshold = new Date();
+    threshold.setDate(threshold.getDate() - days);
+
+    // ─────────────── データ補完 ───────────────
+    // 小学生向け：まず生データを取ってくるよ
+    const rawSeries = historyData[p][inc];
+    // 小学生向け：１時間ごとに間を埋めるよ
+    const series     = completeHourlyData(rawSeries);
+
+    // ─────────────── 期間フィルタ適用 ───────────────
+    // 小学生向け：閾値より古い時間のデータを取り除くよ
+    const filteredSeries = {};
+    Object.entries(series).forEach(([parts, vals]) => {
+      const temp = {};
+      Object.entries(vals).forEach(([ts, v]) => {
+        if (new Date(ts) >= threshold) {
+          temp[ts] = v;
+        }
+      });
+      filteredSeries[parts] = temp;
+    });
+
+  // ─────────────── Chart.js データ生成 ───────────────
+  const datasets = Object.entries(filteredSeries).map(([parts, vals]) => {
+    // 小学生向け：partsはもう「アクセ1」など表示したい名前なので、
+    //               bagcatMappingを使わず、そのままラベルにするよ
+    const label = parts;
+
+    // 小学生向け：timestamp→値 のペアを {x: Date, y: HC値} の配列にするよ
+    const data = Object.entries(vals)
+      .map(([t, v]) => ({ x: new Date(t), y: v }))
+      .sort((a, b) => a.x - b.x);
+
+    // 小学生向け：グラフの線の設定を返すよ
+    return {
+      label,           // そのままの名前を凡例にする
+      data,            // 順序付きのデータ
+      fill: false,     // 線の下を塗りつぶさない
+      spanGaps: false,  // ← これでnull区間は必ず切れる
+      tension: 0,      // 線のカーブをなしに
+      borderWidth: 2,  // 線の太さ
+      pointRadius: 4,  // データ点の丸の大きさ
+      pointHoverRadius: 6, // マウスオーバー時の丸の大きさ
+    };
+  });
+    const ctx = document.getElementById("historyChart").getContext("2d");
+    if (historyChart) historyChart.destroy();
+    historyChart = new Chart(ctx, {
+      type: "line",
+      data: { datasets },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom", labels: { usePointStyle: true } },
+          tooltip: {
+            mode: "index",
+            intersect: false,
+            callbacks: {
+              title(items) {
+                return new Date(items[0].parsed.x).toLocaleString();
+              },
+              label(item) {
+                return `${item.dataset.label}: ${item.parsed.y} HC`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            type: "time",
+            time: { unit: "hour", displayFormats: { hour: "MM/DD HH:mm" } },
+            title: { display: true, text: "時間" },
+          },
+          y: {
+            title: { display: true, text: "ハンコイン" },
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+  });
+    </script>
+  <script>
+// PC用バナー
+function loadSideAd() {
+  const c = document.getElementById("admax-side");
+  // inline push
+  const s1 = document.createElement("script");
+  s1.type = "text/javascript";
+  s1.text = `
+    (admaxads = window.admaxads || []).push({
+      admax_id: "abaf56c5df7973ada2bead83e0569535",
+      type: "action"
+    });
+  `;
+  c.appendChild(s1);
+  // ライブラリ
+  const s2 = document.createElement("script");
+  s2.src     = "https://adm.shinobi.jp/st/t.js";
+  s2.charset = "utf-8";
+  s2.async   = true;
+  c.appendChild(s2);
+}
+
+// スマホ用バナー
+function loadMobileBanner() {
+  const c = document.getElementById("admax-side");
+  // inline push（overlay ではなく action に）
+  const s1 = document.createElement("script");
+  s1.type = "text/javascript";
+  s1.text = `
+    (admaxads = window.admaxads || []).push({
+      admax_id: "9154875978cb3129a544a74cbef78462",
+      type: "action"
+    });
+  `;
+  c.appendChild(s1);
+  // ライブラリ
+  const s2 = document.createElement("script");
+  s2.src     = "https://adm.shinobi.jp/st/t.js";
+  s2.charset = "utf-8";
+  s2.async   = true;
+  c.appendChild(s2);
+}
+
+// 読み込み時に振り分け
+window.addEventListener("load", () => {
+  if (window.matchMedia("(max-width: 767px)").matches) {
+    loadMobileBanner();
+  } else {
+    loadSideAd();
+  }
+});
+</script>
+  </body>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9014066221222515"crossorigin="anonymous"></script>
+</html>
