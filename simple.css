@@ -1,0 +1,137 @@
+/* Puretomo | 行政情報サイトを参考にした落ち着いた公共サービス風の外観 */
+:root {
+  --black: #f4f7fa; --surface: #fff; --raised: #fff;
+  --muted: #566779; --white: #273748; --orange: #22577c;
+  --orange-light: #22577c; --line: #d8e1e9; --positive: #157347;
+  --page-width: 1200px; color-scheme: light;
+}
+html, body { background: #f5f7fa !important; color: #273748 !important; }
+body::before { display: none !important; }
+body, button, input, select { font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; }
+a { color: #155b8a; }
+p, li { color: #334457; }
+button:hover:not(:disabled) { filter: none; }
+.site-header {
+  height: 70px; background: #fff !important;
+  border-bottom: 1px solid #cedae5; box-shadow: none !important;
+}
+.site-brand { color: #24394c !important; }
+.brand-symbol {
+  background: #275a7d; color: white; border-radius: 5px;
+  clip-path: none; width: 44px; height: 44px; font-size: 24px;
+}
+.brand-spark { display: none; }
+.brand-copy strong { font-family: inherit; font-size: clamp(19px,2.3vw,25px); font-weight: 800; letter-spacing: .02em; }
+.brand-copy small { font: 500 10px inherit; letter-spacing: .02em; color: #576e82; }
+.header-status { color: #64778b; }
+.menu-trigger {
+  background: white; color: #244e6d; border: 1px solid #b9cbd9;
+  clip-path: none; border-radius: 5px; font-weight: 650; letter-spacing: 0;
+  padding: 9px 15px;
+}
+.menu-trigger:hover { background: #eef4f9; }
+.quick-nav { padding-top: 8px; padding-bottom: 4px; gap: 5px; }
+.quick-nav button {
+  color: #344b61; background: #fff; border: 1px solid #d5dfe8;
+  border-radius: 5px; padding: 10px 14px; font-weight: 600;
+}
+.quick-nav button.active { color: #fff; background: #285b7b; border-color: #285b7b; }
+.quick-nav button:hover { border-color: #285b7b; }
+.sidebar {
+  top: 72px !important; background: #fff !important;
+  border: 1px solid #cedce7 !important; box-shadow: 0 8px 26px #233b531a;
+  border-radius: 6px;
+}
+.sidebar li { color: #31465b !important; font-weight: 550; }
+.sidebar li:hover { color: #205578 !important; background: #edf4f9 !important; }
+.main-container { padding-top: 18px !important; }
+.left-panel, .right-panel {
+  color: #25394c !important; background: #fff !important;
+  border: 1px solid #d9e2ea !important;
+  border-top: 3px solid #36698b !important;
+  box-shadow: none !important; border-radius: 5px !important;
+  padding: clamp(18px,3vw,32px) !important;
+}
+h2 { font-size: clamp(22px,2.5vw,28px); letter-spacing: 0; }
+h3 { font-size: 17px; }
+.page-eyebrow,.results-kicker { color: #4e6980; font: 650 11px inherit; letter-spacing: 0; }
+.section-heading h2 { font-family: inherit; font-weight: 750; }
+.section-heading p { color: #66788b; }
+.outline-button {
+  background: #fff; color: #215a83; border: 1px solid #adc6d8;
+  border-radius: 5px; font-weight: 600;
+}
+.market-overview { gap: 9px; }
+.metric-tile {
+  background: #f4f8fb; border: 1px solid #dce7ef; border-left: 3px solid #5b89a8;
+  border-radius: 5px; min-height: 93px; padding: 15px;
+}
+.metric-tile span { color: #567087; font-weight: 650; }
+.metric-tile strong { color: #244961; font-family: inherit; font-weight: 760; font-size: 25px; }
+.metric-tile small { color: #688095; }
+.search-panel { background: #f8fafc; border: 1px solid #d9e3ed; border-radius: 5px; padding: 18px; margin-bottom: 25px; }
+.search-panel__head strong { color: #294b68; }
+.text-button { color: #215b85; }
+.search-field { color: #465f75; font-weight: 650; }
+.search-fields input,.search-fields select {
+  background: #fff; color: #27394b; border: 1px solid #c8d6e0;
+  border-radius: 4px; font-size: 14px;
+}
+.search-fields input:focus, .search-fields select:focus { border-color: #356a94; }
+.results-heading h3 { font-size: 19px; }
+#tradeResultLabel { color: #627387; }
+.market-grid { gap: 12px; }
+.market-card {
+  background: #fff; border: 1px solid #d5e1e9; border-radius: 5px;
+  padding: 16px; box-shadow: none; transition: border-color .15s;
+}
+.market-card:hover { border-color: #97b9d0; transform: none; }
+.market-card__top { border-bottom: 1px solid #e0e6eb; }
+.market-card__price { color: #1d536f; font-family: inherit; font-weight: 800; font-size: 23px; }
+.market-card__deadline { color: #637589; }
+.market-card__deadline strong { color: #304459; }
+.market-item__image { background: #f1f4f8; border: 1px solid #dde5eb; border-radius: 4px; }
+.market-item__image::before { color: #bac9d3; }
+.market-item__name { color: #233c52; font-weight: 680; }
+.market-item__meta { color: #61768b; }
+.market-item__meta strong { color: #245c81; }
+.market-card__bottom a,.market-card__bottom button {
+  border: 1px solid #b4c8d8; border-radius: 4px;
+  background: #fff; color: #295a7d; font-weight: 650;
+}
+.market-card__bottom .market-card__open { background: #285d82; color: white; border-color: #285d82; }
+.market-empty { background: #f8fafc; border: 1px dashed #b6c9d8; color: #566b80; border-radius: 5px; }
+.market-error { color: #b22222; }
+.market-more { background: #fff; border: 1px solid #b4c8d8; border-radius: 5px; color: #275a81; }
+.form-group input[type=text],.form-group input[type=number],.form-group select,.form-group input[type=search] {
+  background: #fff !important; color: #263b4d !important;
+  border: 1px solid #c5d3df !important; border-radius: 4px !important;
+}
+.form-group label { color: #3d5062 !important; }
+.pop-status-group label { color: #27445c !important; background: #eaf2f8 !important; }
+#addButton,#saveSettingsButton,#loadGraphButton {
+  color: #fff; background: #285b7d; font-weight: 650; border-radius: 4px;
+}
+.scrollable-table-container { background: #fff !important; border-radius: 4px !important; }
+.scrollable-table-container thead th { background: #eaf1f7; color: #2b526e; border-color: #d2dfe8; }
+.scrollable-table-container tbody td { background: #fff; color: #273b4e; border-color: #e2e8ee; }
+.scrollable-table-container tbody td:first-child { background: #f8fafb; }
+#modalWindow {
+  background: #fff; color: #273a4e; border: 1px solid #bfd1df;
+  border-radius: 6px; box-shadow: 0 16px 55px #203b5130;
+}
+.modalItem { background: #f7fafc; color: #263b50; }
+#closeModal { background: #285b7d; color: #fff; border-radius: 5px; }
+#readme > h2:first-child,#settings > h2:first-child,#avatarForm > h2:first-child,#graphSection > h2:first-child { border-left-color: #386b8a; }
+#readme > h3 { color: #285b7d; }
+#avatarSummary { background: #eef5f8; border-left: 3px solid #4b7f9c; }
+@media(max-width:650px) {
+  .site-header { height: 64px; }
+  .brand-symbol { width: 36px; height: 36px; font-size: 21px; }
+  .brand-copy small { display: none; }
+  .quick-nav { padding: 8px 10px 4px; }
+  .quick-nav button { font-size: 12px; }
+  .sidebar { top: 65px !important; right: 8px !important; }
+  .market-card { padding: 13px; }
+  .market-card__price { font-size: 22px; }
+}
