@@ -105,3 +105,15 @@ test('販売一覧からATK DEF MOVを自動抽出し複合タグも分解',()=>
   assert.deepEqual(listing.items.map(x=>x.type).sort(),['ATK','DEF','MOV']);
   assert.match(market[2],/items\.flatMap\(row => row\.items\.map\(item => item\.type\)/);
 });
+
+test('補助データに同じアイテムがあっても正式マスターの部位を優先',()=>{
+  assert.match(market[2],/\[\.\.\.additional,\.\.\.schema\]/);
+  const schema=[
+    {itemCode:'A11CKW',itemName:'【INT+4】ガオウと一緒',parts:'A1',itemGender:'A'},
+    {itemCode:'E41BZP',itemName:'【VIT+4】フォー・ユー',parts:'E4',itemGender:'A'},
+  ];
+  const additional=schema.map(x=>({...x,parts:''}));
+  const lookup=new Map([...additional,...schema].map(x=>[x.itemCode,x]));
+  assert.equal(lookup.get('A11CKW').parts,'A1');
+  assert.equal(lookup.get('E41BZP').parts,'E4');
+});
