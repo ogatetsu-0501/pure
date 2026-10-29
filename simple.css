@@ -135,3 +135,17 @@ h3 { font-size: 17px; }
   .market-card { padding: 13px; }
   .market-card__price { font-size: 22px; }
 }
+
+/* 個人の所持アバターとの差分に基づく費用対効果 */
+.market-card__efficiency {
+  margin-top: 7px;
+  font-size: 12px;
+  color: #586f81;
+  line-height: 1.65;
+  font-weight: 500;
+}
+.market-card__efficiency strong {
+  color: #16577a;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
