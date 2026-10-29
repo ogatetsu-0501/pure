@@ -57,10 +57,30 @@ jobs:
       - name: Run tests
         run: npm test
 
+      # 実行間の圧縮済みアイテム詳細を復元。直近のキャッシュを採用します。
+      # キーは実行ごとに新規作成し、初回は既存の公開JSONから初期化します。
+      - name: Restore bazaar detail cache
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/bazaar-details.json.gz
+          key: pure-detail-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            pure-detail-v1-
+
       # ソース変更時はビルドのみ。定期・手動実行はAPIから再取得します。
       - name: Update bazaar JSON
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: npm run update:bazaar
+
+      # 差分取得に利用するキャッシュを次回の実行へ引き継ぎます。
+      # 実行ごとの新しいキーを保存し、次回は最新キーから復元します。
+      - name: Save bazaar detail cache
+        if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && success()
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/bazaar-details.json.gz
+          key: pure-detail-v1-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Decide whether to deploy
         id: decide
