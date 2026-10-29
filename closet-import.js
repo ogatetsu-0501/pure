@@ -176,6 +176,14 @@
     const link=$('closetBookmarklet');
     // ブラウザのブックマークバーにドラッグして登録する用途。
     link.href='javascript:('+encodeURIComponent(closetBookmarklet.toString())+')()';
+    $('copyClosetBookmarklet').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(link.href);
+        $('closetImportStatus').textContent='ブックマーク用URLをコピーしました。公式クローゼットで使うブックマークに設定してください。';
+      } catch (error) {
+        $('closetImportStatus').textContent='自動コピーできませんでした。PCではリンクをブックマークバーへドラッグしてください。';
+      }
+    });
     $('closetJsonInput').addEventListener('change',async event=>{
       const file=event.target.files?.[0];
       if(!file) return;
