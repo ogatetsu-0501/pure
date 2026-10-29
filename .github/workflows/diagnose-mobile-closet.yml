@@ -1,0 +1,41 @@
+name: Diagnose mobile closet public endpoints
+on:
+  push:
+    paths:
+      - .github/workflows/diagnose-mobile-closet.yml
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Inspect frontend calls only, no login/session
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const main = 'https://puretomo.hange.jp/_next/static/chunks/pages/_app-1ab69aa5a650374c9816.js';
+          const js = await (await fetch(main,{signal:AbortSignal.timeout(15000)})).text();
+          for(const term of [
+            'api/closet/itembag.json',
+            'api/closet/bagcat',
+            'api/closet/total',
+            'closet=S',
+            'closet=D',
+            'axios.create',
+            'withCredentials',
+            'baseURL',
+            'api/closet/itembag',
+          ]){
+            console.log('SEARCH',term,'COUNT',js.split(term).length-1);
+            let ix=-1,i=0;
+            while((ix=js.indexOf(term,ix+1))>=0&&i++<9)console.log('MATCH',term,'OFFSET',ix,'CONTEXT',js.slice(Math.max(0,ix-230),Math.min(js.length,ix+360)));
+          }
+          for(const u of ['https://puretomo.hange.jp/api/closet/itembag.json?bagcat=ALL&page=1',
+                         'https://puretomo-ap.hange.jp/api/closet/itembag.json?bagcat=ALL&page=1']){
+            const r=await fetch(u,{signal:AbortSignal.timeout(10000),headers:{Origin:'https://puretomo.hange.jp',Accept:'application/json'}});
+            console.log('ANONYMOUS',new URL(u).hostname,'status',r.status,'acao',r.headers.get('access-control-allow-origin'),'acac',r.headers.get('access-control-allow-credentials'),'content-type',r.headers.get('content-type'));
+            const body=await r.text();
+            try{const data=JSON.parse(body);console.log('ANONYMOUS FIELDS',Object.keys(data),'status',data.status,'result-keys',Object.keys(data.result||{}))}catch{}
+          }
+          NODE
