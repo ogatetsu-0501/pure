@@ -847,11 +847,7 @@ p, li { color: #deddd9; }
           <p id="closetImportStatus" role="status" aria-live="polite">ログイン情報の入力はこのサイトでは行いません。</p>
         </section>
             <!-- ここからサマリー -->
-        <section class="alias-review" aria-labelledby="aliasTitle">
-          <h3 id="aliasTitle">複合パラメータの対応候補（要確認）</h3>
-          <p>マスターから見つかった略称を一覧にしています。対応表を確認するまでは未確定です。</p>
-          <div id="aliasCandidates">読み込み中…</div>
-        </section>
+
         <section class="owned-gallery-section" aria-label="取り込んだ所持アバター">
           <h3>クローゼットから取得したアバター</h3>
           <p id="ownedGalleryCount">0件</p>
@@ -1029,6 +1025,43 @@ p, li { color: #deddd9; }
           const s = localStorage.getItem("avatarList");
           if (s) {
             avatarList = JSON.parse(s);
+            // 過去に別々に保存された同一アバターの複合効果を統合します。
+            // アイテムコードがない手動登録や、違う上昇値のレコードは統合しません。
+            if (Array.isArray(avatarList)) {
+              const grouped = new Map();
+              for (const row of avatarList) {
+                const key = !!row.itemCode
+                  ? [row.itemCode, row.partText, row.increase].join('|')
+                  : null;
+                if (!key) {
+                  grouped.set(Symbol(), [row]);
+                  continue;
+                }
+                if (!grouped.has(key)) grouped.set(key, []);
+                grouped.get(key).push(row);
+              }
+              const migrated = [];
+              for (const rows of grouped.values()) {
+                if (rows.length === 1) {
+                  migrated.push(rows[0]);
+                  continue;
+                }
+                const types = [...new Set(rows.flatMap(row =>
+                  [row.type1, row.type2].filter(type => !!type && type !== 'なし')
+                ))];
+                // 既存の2種類フィールドに収まる場合だけ統合します。
+                if (types.length > 2 || !types.length) {
+                  migrated.push(...rows);
+                  continue;
+                }
+                migrated.push({ ...rows[0], type1: types[0], type2: types[1] || 'なし' });
+              }
+              if (migrated.length !== avatarList.length) {
+                avatarList = migrated;
+                localStorage.setItem('avatarList', JSON.stringify(avatarList));
+                window.dispatchEvent(new Event('puretomo:owned-changed'));
+              }
+            }
             renderAvatarTable();
           }
         });
@@ -1334,7 +1367,7 @@ p, li { color: #deddd9; }
 
           if (
             (!fPart || av.partText === fPart) &&
-            (!fType || av.type1    === fType) &&
+            (!fType || av.type1 === fType || av.type2 === fType) &&
             incMatch  // ▼ ここを fInc===null || Number(av.increase)===fInc から置き換え
           ) {
             const tr = document.createElement("tr");
