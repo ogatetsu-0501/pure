@@ -184,5 +184,11 @@
     "itemName": "【VIT+5】ベルクローズ下",
     "parts": "",
     "itemGender": "M"
+  },
+  {
+    "itemCode": "P111DEP",
+    "itemName": "【SP+500】ミリト",
+    "parts": "",
+    "itemGender": "M"
   }
 ]
