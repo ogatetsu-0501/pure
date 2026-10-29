@@ -180,7 +180,6 @@
         return;
       }
       const targetOrigin='https://ogatetsu-0501.github.io';
-      const target=window.open(targetOrigin+'/pure/#closet-import', 'puretomo-closet-sync');
       let pages=0,items=[];
       // ブックマークレットは公式サイト上で動作するため、画面中央に大きな進捗表示を作ります。
       const progress=document.createElement('div');
@@ -275,27 +274,68 @@
           throw Error('データ変換が不完全です: '+sanitized.length+'/'+maxCount+'件');
         setProgress('取得完了。Puretomoアシスタントへデータを送信中…');
         const data={type:'puretomo:closet-data',version:1,items:sanitized,masterUpdates};
-        let acked=false;
-        const ack=event=>{
-          if(event.origin===targetOrigin && event.data?.type==='puretomo:closet-received') acked=true;
+        // 全件取得後に初めてアシスタントを開き、取得途中の画面切り替えを防ぎます。
+        // ブラウザが自動ポップアップを禁止した場合はクリック可能なボタンに切り替えます。
+        const assistantUrl=targetOrigin+'/pure/#closet-import';
+        const sendToAssistant=async target=>{
+          let acked=false;
+          const ack=event=>{
+            if(event.origin===targetOrigin && event.source===target &&
+               event.data?.type==='puretomo:closet-received') acked=true;
+          };
+          window.addEventListener('message',ack);
+          try{
+            for(let retry=0;retry<12&&!acked;retry++){
+              if(target.closed)break;
+              target.postMessage(data,targetOrigin);
+              if(!acked)await new Promise(resolve=>setTimeout(resolve,650));
+            }
+          }finally{
+            window.removeEventListener('message',ack);
+          }
+          if(!acked)throw Error('アシスタントにデータを送信できませんでした');
+          setProgress('送信完了。アシスタントで反映を開始します…');
+          target.focus();
         };
-        window.addEventListener('message',ack);
-        for(let retry=0;retry<12&&!acked;retry++){
-          target?.postMessage(data,targetOrigin);
-          await new Promise(resolve=>setTimeout(resolve,650));
+        const showTransferButton=()=>{
+          setProgress('取得完了：'+sanitized.length+'点。下のボタンを押してアシスタントへ移動してください。');
+          const button=document.createElement('button');
+          button.textContent='アシスタントへ移動して反映';
+          button.style.cssText='display:block;margin:22px auto 0;padding:16px 24px;border:0;border-radius:10px;background:#70d7ff;color:#102236;font-size:20px;font-weight:bold;cursor:pointer';
+          progressDetail.append(button);
+          button.addEventListener('click',async()=>{
+            const target=window.open(assistantUrl,'puretomo-closet-sync');
+            if(!target){
+              console.error('[Puretomo タブ起動エラー] ポップアップを許可してください');
+              setProgress('タブを開けませんでした。ポップアップを許可して再度お試しください。');
+              progressDetail.append(button);
+              return;
+            }
+            button.disabled=true;
+            setProgress('アシスタントへ送信中…');
+            try{
+              await sendToAssistant(target);
+              progress.remove();
+            }catch(error){
+              console.error('[Puretomo 送信エラー]',error);
+              setProgress('送信に失敗しました。もう一度ボタンを押してください。');
+              button.disabled=false;
+              progressDetail.append(button);
+            }
+          });
+        };
+        const target=window.open(assistantUrl,'puretomo-closet-sync');
+        if(!target){
+          console.warn('[Puretomo] タブの自動オープンが制限されました');
+          showTransferButton();
+          return;
         }
-        window.removeEventListener('message',ack);
-        if(acked) {
-          setProgress('取得完了。アシスタントのタブに切り替えます…');
-          target?.focus();
-        }
-        if(!acked) {
-          setProgress('自動送信できなかったため、JSONファイルを保存します');
-          const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
-          const a=document.createElement('a'),url=URL.createObjectURL(blob);
-          a.href=url;a.download='puretomo-closet-'+new Date().toISOString().slice(0,10)+'.json';
-          document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-          alert('ブラウザ内で '+sanitized.length+' 点を取得しました。\nJSONをダウンロードしたので、Puretomoの所持一覧から読み込んでください。');
+        try{
+          await sendToAssistant(target);
+        }catch(error){
+          console.error('[Puretomo 送信エラー]',error);
+          showTransferButton();
+          return;
         }
       }catch(error) {
         console.error('[Puretomo 取得エラー]',error);
@@ -303,7 +343,8 @@
         alert('クローゼットの取り込みに失敗しました：'+error.message+
           '\nログイン済みか、クローゼットの「ALL」が表示されているか確認してください。');
       }finally {
-        progress.remove();
+        // ボタンによる手動移動が必要なときは進捗表示を保持します。
+        if (!progress.querySelector('button')) progress.remove();
       }
     })();
   }
