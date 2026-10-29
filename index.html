@@ -1897,5 +1897,14 @@ p, li { color: #deddd9; }
 })();
 
 </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {
+            // ブラウザで利用できない場合は通常の画像キャッシュへフォールバック。
+          });
+        });
+      }
+    </script>
   </body>
 </html>
