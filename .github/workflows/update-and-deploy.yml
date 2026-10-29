@@ -70,6 +70,8 @@ jobs:
       # push時はビルドのみ。GASからのdispatchと手動実行はAPIから再取得。
       - name: Update bazaar JSON
         if: github.event_name == 'workflow_dispatch'
+        env:
+          HANGE_SESSION_COOKIE: ${{ secrets.HANGE_SESSION_COOKIE }}
         run: npm run update:bazaar
 
       # 差分取得に利用するキャッシュを次回の実行へ引き継ぎます。
