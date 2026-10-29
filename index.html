@@ -832,6 +832,20 @@ p, li { color: #deddd9; }
 
       <div class="right-panel" id="rightPanel">
         <h2>追加されたアバター一覧</h2>
+        <section class="closet-import-panel" aria-labelledby="closetImportTitle">
+          <h3 id="closetImportTitle">公式クローゼットからの取り込み（試験版）</h3>
+          <p>公式サイトへのログインはご自身で行います。所持品データはこの端末内だけで処理し、Puretomoのサーバーへ送信しません。</p>
+          <div class="closet-import-actions">
+            <a href="https://puretomo.hange.jp/closet/" target="_blank" rel="noopener noreferrer">① 公式クローゼットを開いてログイン</a>
+            <a href="#" id="closetBookmarklet" title="PCではこのリンクをブックマークバーへドラッグして登録してください">② 取り込み用ブックマーク</a>
+            <button type="button" id="copyClosetBookmarklet">ブックマークのURLをコピー</button>
+          </div>
+          <p class="closet-import-note">PCでは「②」をブックマークバーにドラッグして登録し、ログイン後のクローゼット画面でそのブックマークを開きます。成功するとこの画面へデータを渡します。取得できない場合は、APIやログイン仕様の変更が考えられます。</p>
+          <label class="closet-import-file">補助機能で保存されたJSONを読み込む（代替手段）
+            <input id="closetJsonInput" type="file" accept=".json,application/json" />
+          </label>
+          <p id="closetImportStatus" role="status" aria-live="polite">ログイン情報の入力はこのサイトでは行いません。</p>
+        </section>
             <!-- ここからサマリー -->
         <div id="avatarSummary" style="margin: 0 0 12px; font-weight: bold;"></div>
     <!-- ここまでサマリー -->
@@ -2015,5 +2029,6 @@ p, li { color: #deddd9; }
         });
       }
     </script>
+    <script src="closet-import.js" defer></script>
   </body>
 </html>
