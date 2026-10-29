@@ -107,7 +107,10 @@ test('販売一覧からATK DEF MOVを自動抽出し複合タグも分解',()=>
 });
 
 test('補助データに同じアイテムがあっても正式マスターの部位を優先',()=>{
-  assert.match(market[2],/\[\.\.\.additional,\.\.\.schema\]/);
+  // 一般マスターを優先し、不足した値だけ補助マスターで補完する実装を検証します。
+  assert.match(market[2], /const lookup = new Map\(additional\.filter/);
+  assert.match(market[2], /for \(const item of schema\)/);
+  assert.match(market[2], /parts: item\.parts \|\| fallback\?\.parts/);
   const schema=[
     {itemCode:'A11CKW',itemName:'【INT+4】ガオウと一緒',parts:'A1',itemGender:'A'},
     {itemCode:'E41BZP',itemName:'【VIT+4】フォー・ユー',parts:'E4',itemGender:'A'},
