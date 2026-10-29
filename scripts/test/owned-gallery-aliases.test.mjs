@@ -36,5 +36,7 @@ test('未知の効果名もマスター収集対象',()=>{
   assert.deepEqual(parseStatEffects('【P／L+2】ノクスフェイス'),[
     {type:'POW',value:2},{type:'LUK',value:2},
   ]);
-  assert.deepEqual(parseStatEffects('【AT／DF+10】案内嬢プリム'),[]);
+  assert.deepEqual(parseStatEffects('【AT／DF+10】案内嬢プリム'),[
+    {type:'ATK',value:10},{type:'DEF',value:10},
+  ]);
 });
