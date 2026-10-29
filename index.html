@@ -1777,9 +1777,7 @@ p, li { color: #deddd9; }
         const match = name.match(/^【([^+】]+)\+([^】]+)】/);
         const label = match?.[1]?.replace(/[／⁄]/g,'/').trim().toUpperCase() || '';
         const knownCombos = {
-          'P/L':['POW','LUK'], 'P/I':['POW','INT'],
-          'V/L':['VIT','LUK'], 'S/L':['SPD','LUK'],
-          ALL:['POW','INT','SPD','VIT','LUK'],
+          'P/L':['POW','LUK'], ALL:['POW','INT','SPD','VIT','LUK'],
         };
         const types = knownCombos[label] || [label];
         const value = numeric(match?.[2]);
