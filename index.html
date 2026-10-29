@@ -1933,7 +1933,8 @@ p, li { color: #deddd9; }
       ]);
       if (!Array.isArray(bazaar) || !Array.isArray(schema) || !Array.isArray(additional)) throw new Error('公開データの形式が不正です');
       const parts = new Map(labels.split(/\r?\n/).slice(1).map(line=>line.split(',').map(x=>x.trim())).filter(x=>x.length>=2));
-      const lookup = new Map([...schema,...additional].map(item=>[item.itemCode,item]));
+      // 正式マスターを最後に配置し、補助データの空欄で部位・名称・性別を上書きしない。
+      const lookup = new Map([...additional,...schema].filter(item=>item?.itemCode).map(item=>[item.itemCode,item]));
       state.listings = bazaar.map(row=>buildListing(row,lookup,parts));
       state.source = true;
       updateFilterOptions(state.listings);
