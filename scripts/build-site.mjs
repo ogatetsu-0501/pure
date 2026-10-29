@@ -10,7 +10,8 @@ const publicFiles = [
   'file_0000000078ac61f7b83750d02fab108a.png',
   'ads.txt', 'robots.txt', 'sitemap.xml',
   'bagcat_labels.csv', 'type_options.csv',
-  'bazzarList.json', 'itemAnother.json', 'itemCodeSchema.json',
+  'bazzarList.json',
+  'update-status.json', 'itemAnother.json', 'itemCodeSchema.json',
   'buzzerHistory.json', 'malebuzzerHistory.json', 'femalebuzzerHistory.json',
 ];
 
