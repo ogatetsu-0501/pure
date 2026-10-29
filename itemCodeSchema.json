@@ -17326,5 +17326,11 @@
     "itemName": "【VIT+2】マーメイド・上",
     "parts": "H",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "LD21BRI",
+    "itemName": "【VIT+5】ルルシック下",
+    "parts": "L",
+    "itemGender": "F"
   }
 ]

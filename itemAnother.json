@@ -130,5 +130,23 @@
     "itemName": "月凛華",
     "parts": "P",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "A21D9C",
+    "itemName": "[’S]黒き聖痕",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A2133C",
+    "itemName": "[’S]シークレットヴァルツ・s",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD21DKJ",
+    "itemName": "いたずらミミン",
+    "parts": "",
+    "itemGender": "F"
   }
 ]
