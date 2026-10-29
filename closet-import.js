@@ -176,7 +176,12 @@
   document.addEventListener('DOMContentLoaded',()=>{
     const link=$('closetBookmarklet');
     // ブラウザのブックマークバーにドラッグして登録する用途。
-    link.href='javascript:('+closetBookmarklet.toString()+')()';
+    // モバイルChromeはブックマークのURL中の改行を除去するため、
+    // コメント行と改行を削って1行の有効なJavaScriptとして登録する。
+    const bookmarkletCode = closetBookmarklet.toString()
+      .replace(/^\\s*\\/\\/.*$/gm, '')
+      .replace(/\\s*\\n\\s*/g, ' ');
+    link.href='javascript:('+bookmarkletCode+')()';
     $('copyClosetBookmarklet').addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(link.href);
