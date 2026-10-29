@@ -6,7 +6,7 @@ import path from 'node:path';
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const outputDirectory = path.join(projectRoot, '_site');
 const publicFiles = [
-  'index.html', 'simple.css', 'No_001~2.png',
+  'index.html', 'simple.css', 'sw.js', 'No_001~2.png',
   'file_0000000078ac61f7b83750d02fab108a.png',
   'robots.txt', 'sitemap.xml',
   'bagcat_labels.csv', 'type_options.csv',
