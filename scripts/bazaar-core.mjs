@@ -188,10 +188,12 @@ export async function collectBazaarData({
   const timestamp = tradeData.serverTime;
   if (!Number.isFinite(Date.parse(timestamp))) throw new Error('itemtradeのserverTimeが不正です');
   const codes = new Set(schema.map(item => item.itemCode));
+  // バザーAPIに登場した全コードを確認します。
+  // 既知アイテムだけに絞ると、新作だけで構成された出品が永久に見つかりません。
   const initialCodes = Array.from(new Set(trades
-    .filter(item => !!item.itemCode && codes.has(item.itemCode))
+    .filter(item => !!item.itemCode)
     .map(item => item.itemCode)));
-  if (!initialCodes.length) throw new Error('既知のアイテムが1件も見つかりません');
+  if (!initialCodes.length) throw new Error('APIがアイテムコードを返しませんでした');
   const cache = new Map();
   async function fetchDetail(code) {
     if (!cache.has(code)) cache.set(code, loadDetail(code));
@@ -199,7 +201,31 @@ export async function collectBazaarData({
   }
   const bazaarMap = new Map();
   const initialDetails = await mapWithConcurrency(initialCodes, concurrency, fetchDetail);
-  mergeTrades(bazaarMap, initialDetails);
+  const relevantDetails = [];
+  let newlyDiscoveredCount = 0;
+  for (let index = 0; index < initialCodes.length; index++) {
+    const code = initialCodes[index];
+    const detail = initialDetails[index];
+    const itemInfo = detail?.result?.itemInfo;
+    const isKnown = codes.has(code);
+    const isStatAvatar = !!itemInfo?.itemName?.match(/^【[^+】]+\\+[^】]+】/);
+    if (!isKnown && !itemInfo?.itemName) {
+      throw new Error('新規アイテムの情報を取得できません: ' + code);
+    }
+    if (!isKnown && isStatAvatar) {
+      schema.push({
+        itemCode: code,
+        itemName: itemInfo.itemName,
+        parts: itemInfo.bagcat,
+        itemGender: extractGender(detail, code),
+      });
+      codes.add(code);
+      newlyDiscoveredCount++;
+    }
+    if (isKnown || isStatAvatar) relevantDetails.push(detail);
+  }
+  if (!relevantDetails.length) throw new Error('ステータス付きアバターの出品が見つかりません');
+  mergeTrades(bazaarMap, relevantDetails);
   const additionalCodes = new Set();
   const checkedCodes = new Set();
   for (let round = 0; round < MAX_DISCOVERY_ROUNDS; round++) {
@@ -258,5 +284,13 @@ export async function collectBazaarData({
     'itemCodeSchema.json': schema,
     'malebuzzerHistory.json': maleHistory,
     'femalebuzzerHistory.json': femaleHistory,
+    'update-status.json': {
+      'fetched-at': now.toISOString(),
+      'server-time': timestamp,
+      'listing-count': bazaarList.length,
+      'scanned-code-count': initialCodes.length,
+      'new-code-count': newlyDiscoveredCount,
+      'schema-code-count': schema.length,
+    },
   };
 }
