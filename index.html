@@ -1711,7 +1711,7 @@ p, li { color: #deddd9; }
   function totalImprovement(listing) {
     const maxGains = new Map();
     for (const item of listing.items) {
-      if (!item.type || (state.efficiencyTypes !== null && !state.efficiencyTypes.has(item.type))) continue;
+      if (!item.type || (state.efficiencyTypes instanceof Set && !state.efficiencyTypes.has(item.type))) continue;
       const key = item.part + '|' + item.type;
       maxGains.set(key, Math.max(maxGains.get(key) || 0, improvement(item)));
     }
