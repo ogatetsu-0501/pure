@@ -1785,7 +1785,10 @@ p, li { color: #deddd9; }
         const value = numeric(match?.[2]);
         return types.filter(Boolean).map(type => ({
           code, name, type, value,
-          part: parts.get(rawItem?.parts) || rawItem?.parts || 'その他',
+          // マスターに部位がない場合は、アイテムコード先頭の最長一致から補完します。
+          part: parts.get(rawItem?.parts) || rawItem?.parts ||
+            [...parts.entries()].filter(([prefix]) => code.startsWith(prefix))
+              .sort((a, b) => b[0].length - a[0].length)[0]?.[1] || 'その他',
           gender: rawItem?.itemGender || 'A',
         }));
       }),
@@ -1849,23 +1852,34 @@ p, li { color: #deddd9; }
     const settingIncrease = getSettings('filterInc');
     const settingOperator = getSettings('filterIncOp', 'gte');
     state.ownedBest = readOwnedBest();
-    state.filtered = state.listings.filter(listing => {
-      if (gender && listing.items.some(item => item.gender && item.gender !== 'A' && item.gender !== gender)) return false;
-      return listing.items.some(item => {
-        if (keyword && !`${item.name} ${item.code} ${item.type}+${item.value}`.normalize('NFKC').toLocaleLowerCase('ja').includes(keyword)) return false;
-        if (type && item.type !== type) return false;
-        if (part && item.part !== part) return false;
-        if (settingPart && item.part !== settingPart) return false;
-        if (settingType && item.type !== settingType) return false;
-        if (settingIncrease) {
+    // バザー内でも条件に合う効果だけを残します。
+    // 男性用・共通を選んだ場合は女性専用を、女性用・共通なら男性専用を表示しません。
+    state.filtered = state.listings.map(listing => {
+      const items = listing.items.filter(item => {
+        const isGenderMatch = !gender || item.gender === 'A' || item.gender === gender;
+        if (!isGenderMatch) return false;
+
+        const normalizedText = `${item.name} ${item.code} ${item.type}+${item.value}`
+          .normalize('NFKC').toLocaleLowerCase('ja');
+        const isKeywordMatch = !keyword || normalizedText.includes(keyword);
+        const isTypeMatch = !type || item.type === type;
+        const isPartMatch = !part || item.part === part;
+        const isSettingPartMatch = !settingPart || item.part === settingPart;
+        const isSettingTypeMatch = !settingType || item.type === settingType;
+        if (!isKeywordMatch || !isTypeMatch || !isPartMatch ||
+            !isSettingPartMatch || !isSettingTypeMatch) return false;
+
+        if (!!settingIncrease) {
           const goal = Number(settingIncrease);
-          if (settingOperator === 'gte' && item.value < goal) return false;
-          if (settingOperator === 'lte' && item.value > goal) return false;
-          if (settingOperator === 'eq' && item.value !== goal) return false;
+          const isAtLeast = settingOperator === 'gte' && item.value >= goal;
+          const isAtMost = settingOperator === 'lte' && item.value <= goal;
+          const isEqual = settingOperator === 'eq' && item.value === goal;
+          if (!isAtLeast && !isAtMost && !isEqual) return false;
         }
         return true;
       });
-    });
+      return { ...listing, items };
+    }).filter(listing => !!listing.items.length);
     const comparator = {
       new: (a,b) => b.endTime - a.endTime,
       deadline: (a,b) => a.endTime - b.endTime,
