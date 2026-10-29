@@ -30,3 +30,28 @@ test('一覧取得と関連データを集計する', async () => {
   assert.equal(r['bazzarList.json'][0].bazaarId,'id-1');
   assert.equal(r['malebuzzerHistory.json'].HP['1']['頭']['2026-10-29T00:00:00Z'].value,100);
 });
+
+
+// 以前のマスターに存在しない2026年のアバターだけでも、取得漏れを防ぎます。
+test('新作アバターだけのバザーも取得できる', async () => {
+  const detail = {
+    result: {
+      itemInfo: { itemName: '【INT+5】2026年新作', bagcat: 'WA' },
+      tradeItemList: [{ bazaarId: 'sale-new', hopeItemList: [{ hancoin: 600 }],
+        sellEndDate: '2026/11/01 12:00',
+        listingItemList: [{ itemCode: 'NEW2026', itemGender: 'A' }] }],
+    },
+  };
+  const result = await collectBazaarData({
+    schema: structuredClone(SAMPLE_SCHEMA),
+    statusesCsv: 'type\nPOW\nINT\n',
+    labelsCsv: 'code,label\nWA,武器\n',
+    maleHistory: {}, femaleHistory: {},
+    tradeData: { serverTime: SAMPLE_TIME, result: { itemList: [{ itemCode: 'NEW2026' }] } },
+    loadDetail: async () => detail,
+    now: new Date(SAMPLE_TIME),
+  });
+  assert.equal(result['bazzarList.json'].length, 1);
+  assert.equal(result['itemCodeSchema.json'].at(-1).itemCode, 'NEW2026');
+  assert.equal(result['update-status.json']['new-code-count'], 1);
+});
