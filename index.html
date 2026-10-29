@@ -1838,7 +1838,7 @@ p, li { color: #deddd9; }
 
   function filterListings() {
     if (!state.source) return;
-    const keyword = $('tradeKeyword').value.trim().toLocaleLowerCase('ja');
+    const keyword = $('tradeKeyword').value.trim().normalize('NFKC').toLocaleLowerCase('ja');
     const gender = $('tradeGender').value;
     const type = $('tradeStatus').value;
     const part = $('tradePart').value;
@@ -1852,7 +1852,7 @@ p, li { color: #deddd9; }
     state.filtered = state.listings.filter(listing => {
       if (gender && listing.items.some(item => item.gender && item.gender !== 'A' && item.gender !== gender)) return false;
       return listing.items.some(item => {
-        if (keyword && !`${item.name} ${item.code} ${item.type}+${item.value}`.toLocaleLowerCase('ja').includes(keyword)) return false;
+        if (keyword && !`${item.name} ${item.code} ${item.type}+${item.value}`.normalize('NFKC').toLocaleLowerCase('ja').includes(keyword)) return false;
         if (type && item.type !== type) return false;
         if (part && item.part !== part) return false;
         if (settingPart && item.part !== settingPart) return false;
