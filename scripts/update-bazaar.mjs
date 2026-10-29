@@ -1,9 +1,10 @@
 // GitHub ActionsでバザーAPIを取得し、ローカルJSONを更新します。
 // 更新が正常完了したときのみ保存して、取得失敗による欠損を防ぎます。
-import { readFile, rename, writeFile } from 'node:fs/promises';
+import { readFile, rename, writeFile, mkdir } from 'node:fs/promises';
+import { gzipSync, gunzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { collectBazaarData } from './bazaar-core.mjs';
+import { collectIncrementalBazaarData } from './incremental-bazaar.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const TRADE_URL = 'https://puretomo-ap.hange.jp/api/noauth/itemtrade/search.json?sort=newItem&pageCount=10000';
@@ -11,7 +12,7 @@ const DETAIL_URL = 'https://puretomo-ap.hange.jp/api/noauth/bazaar/itemDetail.js
 const RETRY_COUNT = 3;
 const RETRY_DELAY_MS = 1500;
 const REQUEST_TIMEOUT_MS = 20000;
-const DETAIL_CONCURRENCY = 10;
+const CACHE_FILE = '.cache/bazaar-details.json.gz';
 
 // HTTPエラー・タイムアウトが発生した場合は適切な回数だけ再取得します。
 export async function fetchJsonWithRetry(url, { fetchImpl = fetch, retryCount = RETRY_COUNT, delayMs = RETRY_DELAY_MS } = {}) {
@@ -45,11 +46,29 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
     readFile(path.join(root, 'femalebuzzerHistory.json'), 'utf8').then(JSON.parse),
     loadTrade ? loadTrade() : fetchJsonWithRetry(TRADE_URL),
   ]);
-  const result = await collectBazaarData({
-    schema, statusesCsv, labelsCsv, maleHistory, femaleHistory, tradeData,
+  const cachePath = path.join(root, CACHE_FILE);
+  let cacheState = null;
+  try {
+    const compressed = await readFile(cachePath);
+    const decoded = JSON.parse(gunzipSync(compressed).toString('utf8'));
+    if (decoded.version === 1 && decoded.entries && typeof decoded.entries === 'object') cacheState = decoded;
+  } catch (error) {
+    if (error.code !== 'ENOENT') console.warn('過去のキャッシュを読み込めませんでした:', error.message);
+  }
+  const previousListings = await readFile(path.join(root, 'bazzarList.json'), 'utf8').then(JSON.parse);
+  const another = await readFile(path.join(root, 'itemAnother.json'), 'utf8').then(JSON.parse);
+  const { data: result, cacheState: updatedCache, statistics } = await collectIncrementalBazaarData({
+    schema, another, previousListings, statusesCsv, labelsCsv, maleHistory, femaleHistory,
+    tradeData, cacheState,
     loadDetail: loadDetail || (code => fetchJsonWithRetry(DETAIL_URL + encodeURIComponent(code) + '&pageCount=10000')),
-    concurrency: DETAIL_CONCURRENCY, now,
+    now: now || new Date(),
   });
+  // 参照キャッシュはGitHub Actionsのキャッシュ領域へ保存する。
+  await mkdir(path.dirname(cachePath), { recursive: true });
+  const newCacheFile = cachePath + '.tmp';
+  await writeFile(newCacheFile, gzipSync(JSON.stringify(updatedCache), { level: 6 }));
+  await rename(newCacheFile, cachePath);
+  console.log('差分取得:', JSON.stringify(statistics));
   // 全データの取得が完了した場合に限って、変更されたJSONを更新します。
   let hasChanged = false;
   for (const [filename, data] of Object.entries(result)) {
