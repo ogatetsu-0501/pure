@@ -1784,7 +1784,7 @@ p, li { color: #deddd9; }
           ATK: 'ATK', DEF: 'DEF', HP: 'HP', SP: 'SP',
         };
         const statusCodes = label === 'ALL' ? ['P', 'I', 'S', 'V', 'L'] : label.split('/');
-        const types = statusCodes.map(code => statusAliases[code]).filter(Boolean);
+        const types = statusCodes.map(code => statusAliases[code] || (!label.includes('/') ? code : '')).filter(Boolean);
         const value = numeric(match?.[2]);
         return types.filter(Boolean).map(type => ({
           code, name, type, value,
