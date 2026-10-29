@@ -33,7 +33,10 @@
     if (!schemaRes.ok || !labelsRes.ok) throw Error('アバターマスターを取得できませんでした');
     const schema = await schemaRes.json();
     const labelsText = await labelsRes.text();
-    const byCode = new Map(schema.map(item => [item.itemCode,item]));
+    let localMaster = [];
+    try { localMaster = JSON.parse(localStorage.getItem('puretomoLocalItemMaster') || '[]'); } catch { localMaster = []; }
+    if(!Array.isArray(localMaster)) localMaster=[];
+    const byCode = new Map([...schema,...localMaster].filter(x => x?.itemCode).map(item => [item.itemCode,item]));
     const names = new Map(labelsText.split(/\r?\n/).slice(1)
       .map(row => row.split(',').map(v => v.trim())).filter(row => row.length >= 2));
     let existing;
@@ -42,6 +45,7 @@
     const updates = new Map();
     const unresolvedCodes = new Set();
     let unresolved=0, nonStatus=0;
+    const aliases={'P/L':['POW','LUK'],ALL:['POW','INT','SPD','VIT','LUK']};
     for(const item of items) {
       const known = byCode.get(item.itemCode);
       const name = item.itemName || known?.itemName || '';
@@ -51,14 +55,20 @@
       if(!matches.length) { nonStatus++; continue; }
       if(!part) { unresolved++; unresolvedCodes.add(item.itemCode); continue; }
       for(const match of matches) {
-        const type = match[1].trim(), increase = Number(match[2].replace('％','').replace('%',''));
-        if(!/^[A-Z]+$/.test(type)) continue;
+        const rawType = match[1].trim().replace(/[／⁄]/g,'/').toUpperCase();
+        const types = aliases[rawType] || (/^[A-Z]+$/.test(rawType)?[rawType]:[]);
+        const increase = Number(match[2].replace('％','').replace('%',''));
         if(!Number.isFinite(increase) || increase <= 0) continue;
-        const key = part + '|' + type;
-        const old = updates.get(key);
-        if(!old || increase > old.increase) updates.set(key,{part,type,increase,itemCode:item.itemCode,itemName:name});
+        for(const type of types) {
+          const key = part + '|' + type;
+          const old = updates.get(key);
+          if(!old || increase > old.increase)
+            updates.set(key,{part,type,increase,itemCode:item.itemCode,itemName:name});
+        }
       }
     }
+    if(unresolvedCodes.size)
+      status.textContent = '部位未確定のアイテムコード '+unresolvedCodes.size+'件があります。マスター情報がないため数値登録を保留しました。';
     if(!updates.size) {
       throw Error('登録できるステータス付きアバターがありません。取得データの形式やマスターを確認してください');
     }
