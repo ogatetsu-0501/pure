@@ -787,6 +787,17 @@ p, li { color: #deddd9; }
               <label class="search-field">ステータス<select id="tradeStatus"><option value="">すべて</option></select></label>
               <label class="search-field">パーツ<select id="tradePart"><option value="">すべて</option></select></label>
               <label class="search-field">並び替え<select id="tradeSort"><option value="new">新しい締切順</option><option value="cheap">価格が安い順</option><option value="expensive">価格が高い順</option><option value="gainPerHC">1HCあたり上昇値が高い順</option><option value="deadline">終了が近い順</option></select></label>
+            <fieldset class="efficiency-parameters" id="efficiencyParameters" hidden>
+              <legend>1HCあたりの上昇値で評価するパラメータ（複数選択可）</legend>
+              <div class="efficiency-parameters__row">
+                <div class="efficiency-parameters__options" id="efficiencyParameterOptions" aria-label="評価対象パラメータ"></div>
+                <div class="efficiency-parameters__actions">
+                  <button type="button" id="efficiencySelectAll">すべて選択</button>
+                  <button type="button" id="efficiencyClearAll">選択解除</button>
+                </div>
+              </div>
+              <p class="efficiency-parameters__hint" id="efficiencyParameterHint">選択したパラメータの所持差分を合計してHCで割ります。</p>
+            </fieldset>
             </div>
           </section>
           <div class="results-heading"><div><span class="results-kicker">AVAILABLE AVATARS</span><h3>検索結果</h3></div><span id="tradeResultLabel" aria-live="polite">データを読み込み中</span></div>
@@ -1658,7 +1669,7 @@ p, li { color: #deddd9; }
  * 元の所持アバターはlocalStorageのavatarListにそのまま保存する。
  */
 (() => {
-  const state = { listings: [], filtered: [], visible: 40, loading: false, source: null, ownedBest: new Map() };
+  const state = { listings: [], filtered: [], visible: 40, loading: false, source: null, ownedBest: new Map(), efficiencyTypes: null };
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const parseDate = (value) => new Date(String(value || '').replace(/\//g, '-').replace(' ', 'T')).getTime() || 0;
@@ -1700,7 +1711,7 @@ p, li { color: #deddd9; }
   function totalImprovement(listing) {
     const maxGains = new Map();
     for (const item of listing.items) {
-      if (!item.type) continue;
+      if (!item.type || (state.efficiencyTypes !== null && !state.efficiencyTypes.has(item.type))) continue;
       const key = item.part + '|' + item.type;
       maxGains.set(key, Math.max(maxGains.get(key) || 0, improvement(item)));
     }
@@ -1743,6 +1754,38 @@ p, li { color: #deddd9; }
       for (const value of values) control.add(new Option(value, value));
       if (values.includes(previous)) control.value = previous;
     }
+    const choiceContainer = $('efficiencyParameterOptions');
+    let saved = null;
+    try {
+      const parsed = JSON.parse(localStorage.getItem('efficiencyParameters') || 'null');
+      if (Array.isArray(parsed)) saved = new Set(parsed.filter(x => typeof x === 'string'));
+    } catch { /* 無効な設定は全選択に戻す */ }
+    const choices = document.createDocumentFragment();
+    for (const type of statuses) {
+      const label = document.createElement('label');
+      label.className = 'efficiency-parameters__choice';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = type;
+      input.checked = saved === null || saved.has(type);
+      label.append(input, document.createTextNode(type));
+      choices.append(label);
+    }
+    choiceContainer.replaceChildren(choices);
+    updateEfficiencySelection();
+  }
+
+  // 選択したステータスだけを合計。未選択は0評価で表示する。
+  function updateEfficiencySelection() {
+    const checkboxes = [...$('efficiencyParameterOptions').querySelectorAll('input[type="checkbox"]')];
+    state.efficiencyTypes = new Set(checkboxes.filter(input => input.checked).map(input => input.value));
+    const activeSort = $('tradeSort').value === 'gainPerHC';
+    $('efficiencyParameters').hidden = !activeSort;
+    const count = state.efficiencyTypes.size;
+    $('efficiencyParameterHint').textContent = count
+      ? '選択中: ' + [...state.efficiencyTypes].join(' + ') + ' の所持差分合計 ÷ HC'
+      : 'パラメータが未選択です。1つ以上選択してください。';
+    localStorage.setItem('efficiencyParameters', JSON.stringify([...state.efficiencyTypes]));
   }
 
   function filterListings() {
@@ -1752,6 +1795,7 @@ p, li { color: #deddd9; }
     const type = $('tradeStatus').value;
     const part = $('tradePart').value;
     const sort = $('tradeSort').value;
+    $('efficiencyParameters').hidden = sort !== 'gainPerHC';
     const settingPart = getSettings('filterPart');
     const settingType = getSettings('filterType');
     const settingIncrease = getSettings('filterInc');
@@ -1892,9 +1936,28 @@ p, li { color: #deddd9; }
     for (const id of ['tradeKeyword','tradeGender','tradeStatus','tradePart','tradeSort']) {
       $(id).addEventListener(id==='tradeKeyword'?'input':'change', filterListings);
     }
+    $('efficiencyParameterOptions').addEventListener('change', event => {
+      if (event.target.matches('input[type="checkbox"]')) {
+        updateEfficiencySelection();
+        filterListings();
+      }
+    });
+    $('efficiencySelectAll').addEventListener('click', () => {
+      for (const input of $('efficiencyParameterOptions').querySelectorAll('input[type="checkbox"]')) input.checked = true;
+      updateEfficiencySelection();
+      filterListings();
+    });
+    $('efficiencyClearAll').addEventListener('click', () => {
+      for (const input of $('efficiencyParameterOptions').querySelectorAll('input[type="checkbox"]')) input.checked = false;
+      updateEfficiencySelection();
+      filterListings();
+    });
     $('resetTradeFilters').addEventListener('click',()=>{
       for(const id of ['tradeKeyword','tradeGender','tradeStatus','tradePart'])$(id).value='';
       $('tradeSort').value='new';
+      localStorage.removeItem('efficiencyParameters');
+      for (const input of $('efficiencyParameterOptions').querySelectorAll('input[type="checkbox"]')) input.checked = true;
+      updateEfficiencySelection();
       // 設定画面の旧フィルターもクリアして、隠れていた出品を復元します。
       for(const key of ['filterPart','filterType','filterInc'])localStorage.removeItem(key);
       filterListings();
