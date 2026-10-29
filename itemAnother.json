@@ -1,55 +1,127 @@
 [
   {
-    "itemCode": "AE1AT2",
-    "itemName": "ロゼバタフライハット・25th",
-    "parts": "AE",
+    "itemCode": "LD29MD",
+    "itemName": "［’S］束縛のディープレッド",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD272Z",
+    "itemName": "酣春花見酒・宵",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD276O",
+    "itemName": "ハニーレスト",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "AATR",
+    "itemName": "レヴェリー",
+    "parts": "AA",
     "itemGender": "A"
   },
   {
-    "itemCode": "P111ATO",
-    "itemName": "カオストリニティ・25th",
+    "itemCode": "P1111OK",
+    "itemName": "ハチワレのはっち・H",
     "parts": "P",
     "itemGender": "M"
   },
   {
-    "itemCode": "LD11ATD",
-    "itemName": "ウェルズピーター・白黒・25th",
+    "itemCode": "LD111OE",
+    "itemName": "ハチワレのはっち・B",
     "parts": "HL",
     "itemGender": "M"
   },
   {
-    "itemCode": "LD254E",
-    "itemName": "どこでもらくがきっず",
-    "parts": "HL",
-    "itemGender": "F"
+    "itemCode": "A41D3S",
+    "itemName": "[’S]麗脈海底",
+    "parts": "A4",
+    "itemGender": "A"
   },
   {
-    "itemCode": "LD236K",
-    "itemName": "おめめルームウェア",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A32289",
-    "itemName": "エルフ気分",
-    "parts": "A3",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A14FO",
-    "itemName": "[FM＋]ハーロムピン",
+    "itemCode": "A11AI5",
+    "itemName": "ハロウィンカーテン",
     "parts": "A1",
     "itemGender": "A"
   },
   {
-    "itemCode": "LD29Y8",
-    "itemName": "愛の郵便ボトム",
+    "itemCode": "A41AI7",
+    "itemName": "ハロウィンナイトセメタリー",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AB1CXD",
+    "itemName": "安息の地・アナザー",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AB10O",
+    "itemName": "沈黙の薔薇",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AB12TJ",
+    "itemName": "占いの間絨毯",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AB3EN",
+    "itemName": "ラブレチェア",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AB3EO",
+    "itemName": "しょーとけーきクッション",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P1252A",
+    "itemName": "[HT]ユリカ・ウェーブ",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P12594",
+    "itemName": "エリザ・リプレ",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P125YO",
+    "itemName": "[JH]おうちボブ",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD25QC",
+    "itemName": "ふぐがーる",
     "parts": "HL",
     "itemGender": "F"
   },
   {
-    "itemCode": "A4A2F",
-    "itemName": "スターパレード",
+    "itemCode": "E41S2",
+    "itemName": "ふぐクンろぼ",
+    "parts": "E4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41N6",
+    "itemName": "ぴよぴよハロウィン",
+    "parts": "E4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A46YU",
+    "itemName": "ポップンキャンディーズ",
     "parts": "A4",
     "itemGender": "A"
   },
@@ -58,65 +130,5 @@
     "itemName": "月凛華",
     "parts": "P",
     "itemGender": "F"
-  },
-  {
-    "itemCode": "A14F1",
-    "itemName": "にわとりさんだっこ",
-    "parts": "A1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "B31A3",
-    "itemName": "ぴよさんと一緒",
-    "parts": "B3",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "HC2BJQ",
-    "itemName": "ゆるっとラグラン",
-    "parts": "H",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2EGL",
-    "itemName": "ロリポップミニ",
-    "parts": "L",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD27AI",
-    "itemName": "サムライ無双",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A2220",
-    "itemName": "おにぎりおいしい",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E2OH",
-    "itemName": "ブニャティ",
-    "parts": "E2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AAS5",
-    "itemName": "ラブキュン・うーさー",
-    "parts": "AA",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A4594",
-    "itemName": "ヘメラ",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A4A4Y",
-    "itemName": "とあるお家のお庭で",
-    "parts": "A4",
-    "itemGender": "A"
   }
 ]

@@ -17170,5 +17170,161 @@
     "itemName": "【SPD+1】荒鷲の紋章",
     "parts": "A4",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "AA1CD0",
+    "itemName": "【INT+5】賑やかバルーン",
+    "parts": "AA",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AA1BDU",
+    "itemName": "【INT+4】雪がふるにゃん",
+    "parts": "AA",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E1SN",
+    "itemName": "【DRN+2】イニングル会長",
+    "parts": "E1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "ABIJ",
+    "itemName": "【POW+1】メッセージ",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "B3293",
+    "itemName": "【HP+400】水精竜の槍",
+    "parts": "B3",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD21DEO",
+    "itemName": "【VIT+4】ディーラー下",
+    "parts": "L",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P121BRK",
+    "itemName": "【HP+500】ルルツイン",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "AE1CD1",
+    "itemName": "【POW+2】アイドル帽",
+    "parts": "AE",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A47PO",
+    "itemName": "【INT+1】ビビリ帝国",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AA1CKX",
+    "itemName": "【SPD+2】星のスキマ",
+    "parts": "AA",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A21CCY",
+    "itemName": "【INT+2】キュートマイク",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P111CD6",
+    "itemName": "【VIT+2】すおう",
+    "parts": "P",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD11CL4",
+    "itemName": "【INT+2】ポッケつなぎ下",
+    "parts": "L",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD21BZT",
+    "itemName": "【POW+2】猫日和の春・下",
+    "parts": "L",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD11DEN",
+    "itemName": "【VIT+4】ディーラー下",
+    "parts": "L",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD11CV5",
+    "itemName": "【SPD+2】マーマン・下",
+    "parts": "L",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD21CL5",
+    "itemName": "【INT+2】ポッケつなぎ下",
+    "parts": "L",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "HD21CL3",
+    "itemName": "【POW+2】ポッケつなぎ上",
+    "parts": "H",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A321BZM",
+    "itemName": "【INT+2】レックスと花",
+    "parts": "A3",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "AE1DEI",
+    "itemName": "【INT+5】ラビハット",
+    "parts": "AE",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E11C6G",
+    "itemName": "【VIT+2】突進チョトツ",
+    "parts": "E1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AA1BRB",
+    "itemName": "【VIT+2】しがみついて！",
+    "parts": "AA",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A41BDT",
+    "itemName": "【VIT+2】雪のひかり",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AA1BA0",
+    "itemName": "【INT+2】あけおめ・午",
+    "parts": "AA",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "B11CKY",
+    "itemName": "【VIT+2】光を灯して",
+    "parts": "B1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "HD21CV4",
+    "itemName": "【VIT+2】マーメイド・上",
+    "parts": "H",
+    "itemGender": "F"
   }
 ]
