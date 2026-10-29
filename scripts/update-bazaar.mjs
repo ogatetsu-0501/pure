@@ -5,9 +5,11 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { collectIncrementalBazaarData } from './incremental-bazaar.mjs';
+import { mergeTradeLists } from './male-trade.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const TRADE_URL = 'https://puretomo-ap.hange.jp/api/noauth/itemtrade/search.json?sort=newItem&pageCount=10000';
+const MALE_TRADE_URL = 'https://puretomo-ap.hange.jp/api/itemtrade/search.json?bagcat=F&page=1&pageCount=10000';
 const DETAIL_URL = 'https://puretomo-ap.hange.jp/api/noauth/bazaar/itemDetail.json?category=hancoin&itemCode=';
 const RETRY_COUNT = 3;
 const RETRY_DELAY_MS = 1500;
@@ -15,10 +17,10 @@ const REQUEST_TIMEOUT_MS = 20000;
 const CACHE_FILE = '.cache/bazaar-details.json.gz';
 
 // HTTPエラー・タイムアウトが発生した場合は適切な回数だけ再取得します。
-export async function fetchJsonWithRetry(url, { fetchImpl = fetch, retryCount = RETRY_COUNT, delayMs = RETRY_DELAY_MS } = {}) {
+export async function fetchJsonWithRetry(url, { fetchImpl = fetch, retryCount = RETRY_COUNT, delayMs = RETRY_DELAY_MS, headers } = {}) {
   for (let attempt = 1; attempt <= retryCount; attempt++) {
     try {
-      const response = await fetchImpl(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      const response = await fetchImpl(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS), headers });
       if (!response.ok) {
         const canRetry = response.status === 429 || response.status >= 500;
         if (!canRetry) throw new Error('HTTP ' + response.status + ': ' + url);
@@ -38,14 +40,22 @@ export async function fetchJsonWithRetry(url, { fetchImpl = fetch, retryCount = 
 // 公開データの正本は同じリポジトリ内のJSONです。
 export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot, now } = {}) {
   const root = dataRoot;
-  const [schema, statusesCsv, labelsCsv, maleHistory, femaleHistory, tradeData] = await Promise.all([
+  // 認証情報はActions Secretsからのみ受け取り、ログや保存ファイルに出力しません。
+  const cookie = process.env.HANGE_SESSION_COOKIE;
+  if (!cookie && !loadTrade) throw new Error('HANGE_SESSION_COOKIE が設定されていません');
+  const [schema, statusesCsv, labelsCsv, maleHistory, femaleHistory, publicTradeData, maleTradeData] = await Promise.all([
     readFile(path.join(root, 'itemCodeSchema.json'), 'utf8').then(JSON.parse),
     readFile(path.join(root, 'type_options.csv'), 'utf8'),
     readFile(path.join(root, 'bagcat_labels.csv'), 'utf8'),
     readFile(path.join(root, 'malebuzzerHistory.json'), 'utf8').then(JSON.parse),
     readFile(path.join(root, 'femalebuzzerHistory.json'), 'utf8').then(JSON.parse),
     loadTrade ? loadTrade() : fetchJsonWithRetry(TRADE_URL),
+    loadTrade ? null : fetchJsonWithRetry(MALE_TRADE_URL, { headers: { Cookie: cookie, Accept: 'application/json' } }),
   ]);
+  // 既存テストではloadTradeで公開一覧のみを注入可能にし、通常実行では両方検証します。
+  const { tradeData, maleCodes } = maleTradeData
+    ? mergeTradeLists(publicTradeData, maleTradeData)
+    : { tradeData: publicTradeData, maleCodes: new Set() };
   const cachePath = path.join(root, CACHE_FILE);
   let cacheState = null;
   try {
@@ -60,7 +70,10 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
   const { data: result, cacheState: updatedCache, statistics } = await collectIncrementalBazaarData({
     schema, another, previousListings, statusesCsv, labelsCsv, maleHistory, femaleHistory,
     tradeData, cacheState,
-    loadDetail: loadDetail || (code => fetchJsonWithRetry(DETAIL_URL + encodeURIComponent(code) + '&pageCount=10000')),
+    loadDetail: loadDetail || (code => fetchJsonWithRetry(
+      DETAIL_URL + encodeURIComponent(code) + '&pageCount=10000',
+      { headers: maleCodes.has(code) ? { Cookie: cookie, Accept: 'application/json' } : undefined },
+    )),
     now: now || new Date(),
   });
   // 参照キャッシュはGitHub Actionsのキャッシュ領域へ保存する。
