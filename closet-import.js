@@ -43,7 +43,7 @@
     function namesHasCode(code) { return labelsText.split(/\r?\n/).slice(1).some(line => line.split(',')[0].trim() === code); }
     const mergedMaster = new Map([...localMaster,...accepted].map(item => [item.itemCode,item]));
     localStorage.setItem('puretomoLocalItemMaster', JSON.stringify([...mergedMaster.values()]));
-    const byCode = new Map([...schema,...mergedMaster.values()].filter(x => x?.itemCode).map(item => [item.itemCode,item]));
+    const byCode = new Map([...mergedMaster.values(),...schema].filter(x => x?.itemCode).map(item => [item.itemCode,item]));
     const names = new Map(labelsText.split(/\r?\n/).slice(1)
       .map(row => row.split(',').map(v => v.trim())).filter(row => row.length >= 2));
     let existing;
