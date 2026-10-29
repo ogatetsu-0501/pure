@@ -1,4 +1,4 @@
-name: Inspect public closet integration only
+name: Inspect closet client program only
 on:
   push:
     paths:
@@ -10,29 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Inspect unauthenticated closet HTML and JS references
+      - name: Inspect publicly available closet JavaScript only
         run: |
           node --input-type=module <<'NODE'
-          const url='https://puretomo.hange.jp/closet/';
-          const r=await fetch(url,{signal:AbortSignal.timeout(12000),headers:{Origin:'https://ogatetsu-0501.github.io'}});
-          const html=await r.text();
-          console.log('CLOSET HTTP',r.status,'length',html.length);
-          console.log('CLOSET access-control-allow-origin:',r.headers.get('access-control-allow-origin'));
-          console.log('CLOSET cache-control:',r.headers.get('cache-control'));
-          console.log('LOGIN appearance:',/ログイン|login|signin/i.test(html));
-          const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)/g)].map(x=>x[1]);
-          console.log('Script refs:',JSON.stringify(scripts.slice(-15)));
-          const candidates=scripts.map(src=>new URL(src,url)).filter(u=>u.hostname==='puretomo.hange.jp').slice(-3);
-          for(const jsUrl of candidates){
-            const jsR=await fetch(jsUrl,{signal:AbortSignal.timeout(16000)});
-            const js=await jsR.text();
-            const keywords=['/api/noauth/','/api/auth/','/closet','closet.json','/myItems','/items/closet','closetItemList','itemList','inventory'];
-            const hits=keywords.map(term=>({term,count:js.split(term).length-1})).filter(x=>x.count);
-            console.log('PUBLIC ASSET',jsUrl.pathname,'HTTP',jsR.status,'bytes',js.length,'hits:',JSON.stringify(hits));
-            for(const term of ['/api/auth/','closetItemList','/closet']){
-              let at=js.indexOf(term);if(at>=0){
-                console.log('PUBLIC CONTEXT',term,js.slice(Math.max(0,at-80),at+125).replaceAll(/(?:token|secret|password|authorization)[^,;}]{0,80}/gi,'[redacted]'));
-              }
+          const url='https://puretomo.hange.jp/_next/static/chunks/pages/closet-4266d572a226d5b66917.js';
+          const response=await fetch(url,{signal:AbortSignal.timeout(16000)});
+          const js=await response.text();
+          console.log('CLOSET BUNDLE:',response.status,js.length);
+          const words=['itemList','getMy','closet','useQuery','getCloset','getItems','getAvatar','itemCode','avatarCode','bagcat','api/','axios','pageCount','pageSize','currentPage','userId','itemCategory','myItems'];
+          for(const word of words) {
+            let pos=-1,found=0;
+            while((pos=js.indexOf(word,pos+1))>=0 && found<7) {
+              const snippet=js.slice(Math.max(0,pos-180),Math.min(js.length,pos+240)).replaceAll(/(?:password|authorization|accessToken|idToken)[^,;}]*/gi,'[hidden]');
+              console.log('MATCH',word,'at',pos,':',snippet);
+              found++;
             }
           }
           NODE
