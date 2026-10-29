@@ -208,7 +208,7 @@ export async function collectBazaarData({
     const detail = initialDetails[index];
     const itemInfo = detail?.result?.itemInfo;
     const isKnown = codes.has(code);
-    const isStatAvatar = !!itemInfo?.itemName?.match(/^【[^+】]+\\+[^】]+】/);
+    const isStatAvatar = !!itemInfo?.itemName?.match(/^【[^+】]+\+[^】]+】/);
     if (!isKnown && !itemInfo?.itemName) {
       throw new Error('新規アイテムの情報を取得できません: ' + code);
     }
