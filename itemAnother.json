@@ -172,5 +172,17 @@
     "itemName": "ボーダー半袖ニット",
     "parts": "",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "P111BRJ",
+    "itemName": "【HP+500】ベルショート",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD11BRH",
+    "itemName": "【VIT+5】ベルクローズ下",
+    "parts": "",
+    "itemGender": "M"
   }
 ]

@@ -17374,5 +17374,17 @@
     "itemName": "【VIT+4】フォー・ユー",
     "parts": "E4",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "A41CCZ",
+    "itemName": "【HP+500】チョコステージ",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A21B9Y",
+    "itemName": "【HP+500】たまこま羽付き",
+    "parts": "A2",
+    "itemGender": "A"
   }
 ]
