@@ -1776,12 +1776,15 @@ p, li { color: #deddd9; }
         const name = rawItem?.itemName || `アイテムコード ${code}`;
         const match = name.match(/^【([^+】]+)\+([^】]+)】/);
         const label = match?.[1]?.replace(/[／⁄]/g,'/').trim().toUpperCase() || '';
-        const knownCombos = {
-          'AT/DF':['ATK','DEF'], 'P/I':['POW','INT'], 'P/L':['POW','LUK'],
-          'S/L':['SPD','LUK'], 'V/L':['VIT','LUK'],
-          ALL:['POW','INT','SPD','VIT','LUK'],
+        // 複合効果の略号を自動展開します。未知の略号は誤変換せず除外します。
+        const statusAliases = {
+          P: 'POW', I: 'INT', S: 'SPD', V: 'VIT', L: 'LUK',
+          AT: 'ATK', DF: 'DEF',
+          POW: 'POW', INT: 'INT', SPD: 'SPD', VIT: 'VIT', LUK: 'LUK',
+          ATK: 'ATK', DEF: 'DEF', HP: 'HP', SP: 'SP',
         };
-        const types = knownCombos[label] || (label.includes('/') ? [] : [label]);
+        const statusCodes = label === 'ALL' ? ['P', 'I', 'S', 'V', 'L'] : label.split('/');
+        const types = statusCodes.map(code => statusAliases[code]).filter(Boolean);
         const value = numeric(match?.[2]);
         return types.filter(Boolean).map(type => ({
           code, name, type, value,
@@ -1965,8 +1968,18 @@ p, li { color: #deddd9; }
       ]);
       if (!Array.isArray(bazaar) || !Array.isArray(schema) || !Array.isArray(additional)) throw new Error('公開データの形式が不正です');
       const parts = new Map(labels.split(/\r?\n/).slice(1).map(line=>line.split(',').map(x=>x.trim())).filter(x=>x.length>=2));
-      // 正式マスターを最後に配置し、補助データの空欄で部位・名称・性別を上書きしない。
-      const lookup = new Map([...additional,...schema].filter(item=>item?.itemCode).map(item=>[item.itemCode,item]));
+      // 一般マスターの情報を優先し、不足項目だけ補助マスターから補います。
+      const lookup = new Map(additional.filter(item => !!item?.itemCode).map(item => [item.itemCode, item]));
+      for (const item of schema) {
+        if (!item?.itemCode) continue;
+        const fallback = lookup.get(item.itemCode);
+        lookup.set(item.itemCode, {
+          itemCode: item.itemCode,
+          itemName: item.itemName || fallback?.itemName || '',
+          parts: item.parts || fallback?.parts || '',
+          itemGender: item.itemGender || fallback?.itemGender || 'A',
+        });
+      }
       state.listings = bazaar.map(row=>buildListing(row,lookup,parts));
       state.source = true;
       updateFilterOptions(state.listings);
