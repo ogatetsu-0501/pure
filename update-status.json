@@ -1,11 +1,11 @@
 {
-  "fetched-at": "2026-10-29T14:48:48.513Z",
-  "server-time": "2026-10-29T23:48:47.927273",
-  "listing-count": 235,
-  "scanned-code-count": 400,
-  "new-code-count": 2,
-  "schema-code-count": 2898,
-  "detail-request-count": 14,
+  "fetched-at": "2026-10-29T14:53:48.243Z",
+  "server-time": "2026-10-29T23:53:47.650419",
+  "listing-count": 238,
+  "scanned-code-count": 403,
+  "new-code-count": 3,
+  "schema-code-count": 2899,
+  "detail-request-count": 15,
   "detail-request-limit": 15,
   "recheck-hours": 4,
   "api-request-gap-ms": 1200
