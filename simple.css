@@ -181,3 +181,25 @@ h3 { font-size: 17px; }
   border-radius: 4px; padding: 7px 10px; font-size: 12px;
 }
 .efficiency-parameters__hint { font-size: 12px; color: #586c7e; margin: 10px 0 0; overflow-wrap: anywhere; }
+
+/* 所持アバターのローカル取り込み補助 */
+.closet-import-panel {
+  margin: 14px 0 20px;
+  padding: 17px;
+  background: #f6f9fc;
+  border: 1px solid #d9e5ee;
+  border-radius: 6px;
+}
+.closet-import-panel h3 { margin: 0 0 9px; font-size: 16px; color: #2c526e; }
+.closet-import-panel p { margin: 7px 0 12px; font-size: 13px; line-height: 1.65; color: #4e6376; }
+.closet-import-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.closet-import-actions a, .closet-import-actions button {
+  color: #275b80; background: #fff; border: 1px solid #aac4d8;
+  border-radius: 5px; padding: 9px 13px; font-size: 13px; text-decoration: none;
+  font-weight: 650; text-align: center;
+}
+.closet-import-actions a:first-child { color: white; background: #2b607f; border-color: #2b607f; }
+.closet-import-panel .closet-import-note { font-size: 12px; color: #61758a; }
+.closet-import-file { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; font-weight: 600; color: #394f62; }
+.closet-import-file input { max-width: 100%; padding: 6px; background: white; border: 1px solid #c5d6e3; border-radius: 4px; }
+#closetImportStatus { margin-bottom: 0; font-weight: 650; color: #285f80; overflow-wrap: anywhere; }
