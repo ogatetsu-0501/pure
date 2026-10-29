@@ -147,7 +147,7 @@ function canUseGender(itemGender, targetGender) {
 }
 
 // 登録アイテムの性能別・部位別の最安値を算出する。
-function buildLowestPriceMaps(bazaarList, schema, statuses, labels) {
+export function buildLowestPriceMaps(bazaarList, schema, statuses, labels) {
   const lowestMale = {};
   const lowestFemale = {};
   const schemaByCode = new Map(schema.map(item => [item.itemCode, item]));
