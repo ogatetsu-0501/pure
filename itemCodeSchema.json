@@ -17350,5 +17350,29 @@
     "itemName": "【INT+6】ぽかぽかモコフ",
     "parts": "A3",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "AD1BRC",
+    "itemName": "【LUK+2】魔法の蝶ピン",
+    "parts": "AD",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E21DEK",
+    "itemName": "【SPD+7】お飲み物いかが",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E31BRE",
+    "itemName": "【SPD+4】にらみあい",
+    "parts": "E3",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41BZP",
+    "itemName": "【VIT+4】フォー・ユー",
+    "parts": "E4",
+    "itemGender": "A"
   }
 ]
