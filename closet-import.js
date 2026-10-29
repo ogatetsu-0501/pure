@@ -52,7 +52,12 @@
     const updates = new Map();
     const unresolvedCodes = new Set();
     let unresolved=0, nonStatus=0;
-    const aliases={'P/L':['POW','LUK'],ALL:['POW','INT','SPD','VIT','LUK']};
+    // 複合パラメータは頭文字から展開し、同じアバターを1レコードにまとめます。
+    const aliases={P:'POW',I:'INT',S:'SPD',V:'VIT',L:'LUK',AT:'ATK',DF:'DEF'};
+    const expandTypes=raw=>{
+      const parts=raw==='ALL'?['P','I','S','V','L']:raw.split('/');
+      return parts.map(part=>aliases[part]||(!raw.includes('/')?part:'')).filter(Boolean);
+    };
     for(const item of items) {
       const known = byCode.get(item.itemCode);
       const name = item.itemName || known?.itemName || '';
@@ -63,7 +68,7 @@
       if(!part) { unresolved++; unresolvedCodes.add(item.itemCode); continue; }
       for(const match of matches) {
         const rawType = match[1].trim().replace(/[／⁄]/g,'/').toUpperCase();
-        const types = aliases[rawType] || (/^[A-Z]+$/.test(rawType)?[rawType]:[]);
+        const types = expandTypes(rawType);
         const increase = Number(match[2].replace('％','').replace('%',''));
         if(!Number.isFinite(increase) || increase <= 0) continue;
         for(const type of types) {
@@ -99,15 +104,36 @@
       'クローゼットの '+items.length+' 件を確認し、所持最大値を '+additions.length+
       ' 件更新します。\n既存の登録は保持されます。続行しますか？'
     )) return {items:items.length,changes:0,cancelled:true};
-    for(const item of additions) {
-      const index=existing.findIndex(row => row.partText === item.part &&
-        row.type1 === item.type && (!row.type2 || row.type2 === 'なし'));
-      const record={
-        partText:item.part, type1:item.type, type2:'なし',
-        increase:String(item.increase),itemCode:item.itemCode,itemName:item.itemName,registeredAt:new Date().toISOString(),
-      };
-      if(index>=0) existing[index]=record; else existing.push(record);
-      changes++;
+    // 同じアイテム・同じ上昇値から選出された効果は、1つの所持レコードにまとめます。
+    // 別アイテムの既存最大値は保持し、過去のデータを誤って消さないようにします。
+    const grouped=new Map();
+    for(const item of additions){
+      const key=[item.itemCode,item.part,item.increase].join('|');
+      if(!grouped.has(key)) grouped.set(key,{...item,types:[]});
+      grouped.get(key).types.push(item.type);
+    }
+    for(const item of grouped.values()){
+      const types=[...new Set(item.types)];
+      // 所持一覧の既存形式は2効果までのため、3つ以上は2つずつに分けます。
+      for(let index=0;index<types.length;index+=2){
+        const record={
+          partText:item.part,type1:types[index],type2:types[index+1]||'なし',
+          increase:String(item.increase),itemCode:item.itemCode,itemName:item.itemName,
+          registeredAt:new Date().toISOString(),
+        };
+        // 同じコード・値の旧単独レコードのみ統合し、別コードの登録は保護します。
+        const included=new Set([record.type1,record.type2]);
+        for(let oldIndex=existing.length-1;oldIndex>=0;oldIndex--){
+          const row=existing[oldIndex];
+          const isSameItem=row.itemCode===item.itemCode && row.partText===item.part &&
+            Number(row.increase)===item.increase;
+          const isCovered=included.has(row.type1) &&
+            (!row.type2 || row.type2==='なし'||included.has(row.type2));
+          if(isSameItem && isCovered) existing.splice(oldIndex,1);
+        }
+        existing.push(record);
+        changes++;
+      }
     }
     localStorage.setItem('avatarList', JSON.stringify(existing));
     localStorage.setItem('closetOwnedItems', JSON.stringify(items));
