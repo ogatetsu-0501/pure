@@ -149,3 +149,35 @@ h3 { font-size: 17px; }
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
+
+/* HC効率を比較するパラメータ選択：並び替え欄の下へ配置 */
+.efficiency-parameters {
+  grid-column: 1 / -1;
+  border: 1px solid #d5e2eb;
+  background: #ffffff;
+  border-radius: 5px;
+  margin: 4px 0 0;
+  padding: 14px 15px;
+  min-width: 0;
+}
+.efficiency-parameters[hidden] { display: none !important; }
+.efficiency-parameters legend {
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #314e64;
+}
+.efficiency-parameters__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.efficiency-parameters__options { display: flex; flex-wrap: wrap; gap: 9px 15px; }
+.efficiency-parameters__choice {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 0; min-height: 35px; font-size: 14px;
+  font-weight: 650; color: #2f4960;
+}
+.efficiency-parameters__choice input { width: 17px; height: 17px; margin: 0; accent-color: #275b80; }
+.efficiency-parameters__actions { display: inline-flex; flex-wrap: wrap; gap: 7px; }
+.efficiency-parameters__actions button {
+  background: #f4f7fa; border: 1px solid #c6d5e0; color: #2c5978;
+  border-radius: 4px; padding: 7px 10px; font-size: 12px;
+}
+.efficiency-parameters__hint { font-size: 12px; color: #586c7e; margin: 10px 0 0; overflow-wrap: anywhere; }
