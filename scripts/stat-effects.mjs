@@ -11,9 +11,6 @@ export function statTag(name) {
 
 export const DEFAULT_ALIASES = {
   'P/L':['POW','LUK'],
-  'P/I':['POW','INT'],
-  'V/L':['VIT','LUK'],
-  'S/L':['SPD','LUK'],
   'ALL':['POW','INT','SPD','VIT','LUK'],
 };
 
