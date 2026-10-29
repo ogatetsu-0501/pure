@@ -84,7 +84,7 @@ export function chooseDetails(rows, entries, nowMs, limit = REQUEST_LIMIT) {
   // 検索カテゴリに関わるため、初回取り込み対象をさらに先にする。
   // すでに詳細があるアイテムの件数変化も引き続き検知する。
   const unseen = entry => !entries[entry.row.itemCode]?.detail;
-  const compound = entry => /^【[^+】]*[／/][^+】]*\\+[^】]+】/.test(entry.row.itemName || '');
+  const compound = entry => /^【[^+】]*[／/][^+】]*\+[^】]+】/.test(entry.row.itemName || '');
   const order = (a,b) => a.last - b.last || b.row.listingCount - a.row.listingCount || a.row.itemCode.localeCompare(b.row.itemCode);
   changed.sort((a,b) =>
     Number(unseen(b)) - Number(unseen(a)) ||
@@ -138,7 +138,7 @@ export async function collectIncrementalBazaarData({
   const uncached = rows.filter(row=>!entries[row.itemCode]?.detail);
   console.log('詳細取得待ち:', JSON.stringify({
     total: uncached.length,
-    compound: uncached.filter(row=>/^【[^+】]*[／/][^+】]*\\+[^】]+】/.test(row.itemName)).length,
+    compound: uncached.filter(row=>/^【[^+】]*[／/][^+】]*\+[^】]+】/.test(row.itemName)).length,
     selected: chosen.filter(row=>!entries[row.itemCode]?.detail).length,
     pendingCodes: uncached.slice(0,5).map(row=>row.itemCode),
   }));
