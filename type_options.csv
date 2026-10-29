@@ -1,0 +1,12 @@
+type
+HP
+SP
+POW
+INT
+VIT
+SPD
+LUK
+ALL
+HPR
+SPR
+EXP
