@@ -1,0 +1,9 @@
+# Node.js・開発時に生成されるファイル
+node_modules/
+_site/
+*.tmp
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
