@@ -1771,15 +1771,23 @@ p, li { color: #deddd9; }
       price: numericPrice(raw),
       ending: String(raw.sellEndDate || ''),
       endTime: parseDate(raw.sellEndDate),
-      items: (raw.listingItems || []).map(code => {
+      items: (raw.listingItems || []).flatMap(code => {
         const rawItem = lookup.get(code);
         const name = rawItem?.itemName || `アイテムコード ${code}`;
         const match = name.match(/^【([^+】]+)\+([^】]+)】/);
-        return {
-          code, name, type: match?.[1] || '', value: numeric(match?.[2]),
+        const label = match?.[1]?.replace(/[／⁄]/g,'/').trim().toUpperCase() || '';
+        const knownCombos = {
+          'P/L':['POW','LUK'], 'P/I':['POW','INT'],
+          'V/L':['VIT','LUK'], 'S/L':['SPD','LUK'],
+          ALL:['POW','INT','SPD','VIT','LUK'],
+        };
+        const types = knownCombos[label] || [label];
+        const value = numeric(match?.[2]);
+        return types.filter(Boolean).map(type => ({
+          code, name, type, value,
           part: parts.get(rawItem?.parts) || rawItem?.parts || 'その他',
           gender: rawItem?.itemGender || 'A',
-        };
+        }));
       }),
     };
   }
