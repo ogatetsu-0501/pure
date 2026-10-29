@@ -8,7 +8,7 @@ const outputDirectory = path.join(projectRoot, '_site');
 const publicFiles = [
   'index.html', 'No_001~2.png',
   'file_0000000078ac61f7b83750d02fab108a.png',
-  'ads.txt', 'robots.txt', 'sitemap.xml',
+  'robots.txt', 'sitemap.xml',
   'bagcat_labels.csv', 'type_options.csv',
   'bazzarList.json',
   'update-status.json', 'itemAnother.json', 'itemCodeSchema.json',
