@@ -786,7 +786,7 @@ p, li { color: #deddd9; }
               <label class="search-field">アバター性別<select id="tradeGender"><option value="">すべて</option><option value="M">男性用・共通</option><option value="F">女性用・共通</option></select></label>
               <label class="search-field">ステータス<select id="tradeStatus"><option value="">すべて</option></select></label>
               <label class="search-field">パーツ<select id="tradePart"><option value="">すべて</option></select></label>
-              <label class="search-field">並び替え<select id="tradeSort"><option value="new">新しい締切順</option><option value="cheap">価格が安い順</option><option value="expensive">価格が高い順</option><option value="deadline">終了が近い順</option></select></label>
+              <label class="search-field">並び替え<select id="tradeSort"><option value="new">新しい締切順</option><option value="cheap">価格が安い順</option><option value="expensive">価格が高い順</option><option value="gainPerHC">1HCあたり上昇値が高い順</option><option value="deadline">終了が近い順</option></select></label>
             </div>
           </section>
           <div class="results-heading"><div><span class="results-kicker">AVAILABLE AVATARS</span><h3>検索結果</h3></div><span id="tradeResultLabel" aria-live="polite">データを読み込み中</span></div>
@@ -872,6 +872,7 @@ p, li { color: #deddd9; }
       registeredAt: now           // ← ここに追加日時を格納
     });
     localStorage.setItem("avatarList", JSON.stringify(avatarList));
+    window.dispatchEvent(new Event('puretomo:owned-changed'));
     renderAvatarTable();
   }
       
@@ -1228,6 +1229,7 @@ p, li { color: #deddd9; }
           registeredAt: new Date().toISOString()
         });
         localStorage.setItem("avatarList", JSON.stringify(avatarList));
+    window.dispatchEvent(new Event('puretomo:owned-changed'));
         renderAvatarTable();
       
         // フォームクリア
@@ -1319,6 +1321,7 @@ p, li { color: #deddd9; }
               if (origIdx !== -1) {
                 avatarList.splice(origIdx, 1);
                 localStorage.setItem("avatarList", JSON.stringify(avatarList));
+    window.dispatchEvent(new Event('puretomo:owned-changed'));
                 renderAvatarTable();
               }
             });
@@ -1655,7 +1658,7 @@ p, li { color: #deddd9; }
  * 元の所持アバターはlocalStorageのavatarListにそのまま保存する。
  */
 (() => {
-  const state = { listings: [], filtered: [], visible: 40, loading: false, source: null };
+  const state = { listings: [], filtered: [], visible: 40, loading: false, source: null, ownedBest: new Map() };
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const parseDate = (value) => new Date(String(value || '').replace(/\//g, '-').replace(' ', 'T')).getTime() || 0;
@@ -1666,15 +1669,49 @@ p, li { color: #deddd9; }
   const numericPrice = (listing) => Number(listing.hancoin) || 0;
   const ownerGender = (item) => item.gender;
 
-  // 既存の登録済みアバターと比較し、取得していない部位は取得値をそのまま差分とする。
-  function improvement(item) {
-    if (!item.type || !item.value) return 0;
+  // 所持アバターの最大値を部位×ステータスごとに一度だけ索引する。
+  // 既存の「なし」指定および2種類のステータス指定にも対応する。
+  function readOwnedBest() {
     let owned;
     try { owned = JSON.parse(localStorage.getItem('avatarList') || '[]'); } catch { owned = []; }
-    if (!Array.isArray(owned)) owned = [];
-    const best = owned.filter(row => row.partText === item.part && (row.type1 === item.type || row.type2 === item.type))
-      .reduce((result, row) => Math.max(result, Number(row.increase) || 0), 0);
-    return Math.max(0, item.value - best);
+    const best = new Map();
+    if (!Array.isArray(owned)) return best;
+    for (const row of owned) {
+      const value = Number(row?.increase);
+      if (!Number.isFinite(value) || value <= 0) continue;
+      const part = String(row.partText || '');
+      for (const type of [row.type1, row.type2]) {
+        if (!type || type === 'なし') continue;
+        const key = part + '|' + type;
+        best.set(key, Math.max(best.get(key) || 0, value));
+      }
+    }
+    return best;
+  }
+
+  // 同じパーツの所持最大値からの改善量。すでに所持値以下なら0。
+  function improvement(item) {
+    if (!item.type || !Number.isFinite(item.value) || item.value <= 0) return 0;
+    const current = state.ownedBest.get(item.part + '|' + item.type) || 0;
+    return Math.max(0, item.value - current);
+  }
+
+  // セット内に同じパーツ・種類が複数ある場合、上昇の最大値だけを加算する。
+  function totalImprovement(listing) {
+    const maxGains = new Map();
+    for (const item of listing.items) {
+      if (!item.type) continue;
+      const key = item.part + '|' + item.type;
+      maxGains.set(key, Math.max(maxGains.get(key) || 0, improvement(item)));
+    }
+    return [...maxGains.values()].reduce((sum, value) => sum + value, 0);
+  }
+
+  // HC / 差分ではなく「差分 / HC」。大きいほど費用対効果が高い。
+  function gainPerHC(listing) {
+    return Number.isFinite(listing.price) && listing.price > 0
+      ? totalImprovement(listing) / listing.price
+      : 0;
   }
 
   function buildListing(raw, lookup, parts) {
@@ -1719,6 +1756,7 @@ p, li { color: #deddd9; }
     const settingType = getSettings('filterType');
     const settingIncrease = getSettings('filterInc');
     const settingOperator = getSettings('filterIncOp', 'gte');
+    state.ownedBest = readOwnedBest();
     state.filtered = state.listings.filter(listing => {
       if (gender && listing.items.some(item => item.gender && item.gender !== 'A' && item.gender !== gender)) return false;
       return listing.items.some(item => {
@@ -1741,6 +1779,7 @@ p, li { color: #deddd9; }
       deadline: (a,b) => a.endTime - b.endTime,
       cheap: (a,b) => a.price - b.price || a.endTime - b.endTime,
       expensive: (a,b) => b.price - a.price || a.endTime - b.endTime,
+      gainPerHC: (a,b) => gainPerHC(b) - gainPerHC(a) || a.price - b.price || a.endTime - b.endTime,
     }[sort] || ((a,b)=>b.endTime-a.endTime);
     state.filtered.sort(comparator);
     state.visible = 40;
@@ -1754,8 +1793,12 @@ p, li { color: #deddd9; }
       <div class="market-item__text"><p class="market-item__name">${escapeHtml(item.name)}</p>
         <p class="market-item__meta">${escapeHtml(item.part)} · <strong>${escapeHtml(item.type)}${item.type ? ` +${item.value}` : ''}</strong> · 更新差分 ${improvement(item)}</p></div>
     </div>`).join('');
+    const gain = totalImprovement(listing);
+    const efficiency = gainPerHC(listing);
     return `<article class="market-card"><div class="market-card__top">
-      <div class="market-card__price">${listing.price.toLocaleString('ja-JP')} <small>HC</small></div>
+      <div class="market-card__price">${listing.price.toLocaleString('ja-JP')} <small>HC</small>
+        <div class="market-card__efficiency">改善差分合計 +${gain.toLocaleString('ja-JP')}<br>1HCあたり <strong>+${efficiency.toLocaleString('ja-JP',{maximumFractionDigits:4})}</strong></div>
+      </div>
       <div class="market-card__deadline"><span>出品終了</span><strong>${escapeHtml(deadline[0])}</strong><span>${escapeHtml(deadline[1] || '')}</span></div>
       </div><div class="market-card__items">${items}</div>
       <div class="market-card__bottom"><a class="market-card__open" href="${bazaarUrl(listing.id)}" target="_blank" rel="noopener noreferrer">出品ページを開く</a>
@@ -1843,6 +1886,9 @@ p, li { color: #deddd9; }
   }
 
   function setup() {
+    // 同じタブの所持登録・削除、別タブからの変更もソートへ即時反映。
+    window.addEventListener('puretomo:owned-changed', filterListings);
+    window.addEventListener('storage', event => { if (event.key === 'avatarList') filterListings(); });
     for (const id of ['tradeKeyword','tradeGender','tradeStatus','tradePart','tradeSort']) {
       $(id).addEventListener(id==='tradeKeyword'?'input':'change', filterListings);
     }
