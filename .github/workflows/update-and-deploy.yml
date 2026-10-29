@@ -1,0 +1,122 @@
+name: Update bazaar and deploy Puretomo
+
+on:
+  # GitHub Actionsの最短間隔である5分ごとに取得します（UTC）。
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+# 同じサイトの更新が並列に重複しないようにします。
+concurrency:
+  group: pure-update-and-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      should-deploy: ${{ steps.decide.outputs.should-deploy }}
+    steps:
+      - name: Checkout source and data
+        uses: actions/checkout@v4
+
+      - name: Prepare Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 新規リポジトリの初回実行時に限り、公開済みの静的ファイルを移行します。
+      # 以降はpureリポジトリのデータを正本として更新します。
+      - name: Import existing public files if missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            "No_001~2.png" \
+            "file_0000000078ac61f7b83750d02fab108a.png" \
+            "ads.txt" "bagcat_labels.csv" "type_options.csv" \
+            "bazzarList.json" "itemAnother.json" "itemCodeSchema.json" \
+            "buzzerHistory.json" "malebuzzerHistory.json" "femalebuzzerHistory.json"
+          do
+            if [[ ! -f "$file" ]]; then
+              echo "Import: $file"
+              curl --fail --location --retry 3 --silent --show-error \
+                "https://raw.githubusercontent.com/ogatetsu-0501/puretomo/main/$file" \
+                --output "$file"
+            fi
+          done
+
+      - name: Run tests
+        run: npm test
+
+      # ソース変更時はビルドのみ。定期・手動実行はAPIから再取得します。
+      - name: Update bazaar JSON
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: npm run update:bazaar
+
+      - name: Decide whether to deploy
+        id: decide
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" ]] && \
+              git diff --quiet -- \
+                bazzarList.json itemAnother.json itemCodeSchema.json \
+                malebuzzerHistory.json femalebuzzerHistory.json; then
+            echo "should-deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should-deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # 変更分のみコミットします。プッシュ後に別ジョブを起動しないため、
+      # この同じワークフロー内でPagesへ直接デプロイします。
+      - name: Commit imported or updated data
+        shell: bash
+        run: |
+          git add -- \
+            "No_001~2.png" "file_0000000078ac61f7b83750d02fab108a.png" \
+            ads.txt bagcat_labels.csv type_options.csv \
+            bazzarList.json itemAnother.json itemCodeSchema.json \
+            buzzerHistory.json malebuzzerHistory.json femalebuzzerHistory.json
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'chore(data): import or update bazaar data'
+            git push origin HEAD:main
+          fi
+
+      - name: Build Pages artifact
+        if: steps.decide.outputs.should-deploy == 'true'
+        run: npm run build
+
+      - name: Set up GitHub Pages
+        if: steps.decide.outputs.should-deploy == 'true'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        if: steps.decide.outputs.should-deploy == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+
+  deploy:
+    needs: prepare
+    if: needs.prepare.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
