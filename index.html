@@ -1878,12 +1878,30 @@ p, li { color: #deddd9; }
     render();
   }
 
+  // 1つのアバターが複数の効果を持つ場合も、表示はアイテムコード単位でまとめます。
+  // 効果そのものは保持するため、検索と改善差分の計算には影響しません。
+  function groupDisplayItems(items) {
+    const groups = new Map();
+    for (const item of items) {
+      if (!groups.has(item.code)) groups.set(item.code, { ...item, effects: [] });
+      groups.get(item.code).effects.push(item);
+    }
+    return [...groups.values()];
+  }
+
+  // 各ステータスの表示と改善差分を、1つのアイテムの中に並べます。
+  function effectSummary(item) {
+    return item.effects.map(effect =>
+      `${effect.type} +${effect.value}（更新差分 ${improvement(effect)}）`
+    ).join(' / ');
+  }
+
   function cardHtml(listing) {
     const deadline = listing.ending.split(' ');
-    const items = listing.items.map(item => `<div class="market-item">
+    const items = groupDisplayItems(listing.items).map(item => `<div class="market-item">
       <span class="market-item__image"><img loading="lazy" decoding="async" src="${itemUrl(item.code)}" alt="" /></span>
       <div class="market-item__text"><p class="market-item__name">${escapeHtml(item.name)}</p>
-        <p class="market-item__meta">${escapeHtml(item.part)} · <strong>${escapeHtml(item.type)}${item.type ? ` +${item.value}` : ''}</strong> · 更新差分 ${improvement(item)}</p></div>
+        <p class="market-item__meta">${escapeHtml(item.part)} · <strong>${escapeHtml(effectSummary(item))}</strong></p></div>
     </div>`).join('');
     const gain = totalImprovement(listing);
     const efficiency = gainPerHC(listing);
@@ -1952,14 +1970,15 @@ p, li { color: #deddd9; }
 
   function showDetails(listing) {
     const container = $('modalContent');
-    container.innerHTML = listing.items.map(item=>`<div class="modalItem"><img loading="lazy" src="${itemUrl(item.code)}" alt="" /><p><strong>${escapeHtml(item.name)}</strong></p><p>${escapeHtml(item.part)} / ${escapeHtml(item.type)}+${item.value}</p><p>更新差分: ${improvement(item)}</p></div>`).join('');
+    container.innerHTML = groupDisplayItems(listing.items).map(item=>`<div class="modalItem"><img loading="lazy" src="${itemUrl(item.code)}" alt="" /><p><strong>${escapeHtml(item.name)}</strong></p><p>${escapeHtml(item.part)} / ${escapeHtml(effectSummary(item))}</p></div>`).join('');
     $('modalWindow').style.display = 'block';
   }
 
   function buyListing(listing) {
     const eligible = listing.items.filter(item=>!!item.type && item.value>0);
     if (!eligible.length) {alert('登録できるステータス付きアイテムがありません');return;}
-    if (!confirm(`この出品に含まれる${eligible.length}点のアバターを所持リストに登録しますか？`)) return;
+    const avatarCount = new Set(eligible.map(item => item.code)).size;
+    if (!confirm(`この出品に含まれる${avatarCount}点のアバターを所持リストに登録しますか？`)) return;
     for (const item of eligible) {
       // 同一パーツ・ステータスの既存値より大きいときだけ更新します。
       // 元の登録関数と同じavatarList形式を守ります。
