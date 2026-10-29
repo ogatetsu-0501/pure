@@ -1,23 +1,5 @@
 [
   {
-    "itemCode": "LD29MD",
-    "itemName": "［’S］束縛のディープレッド",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD272Z",
-    "itemName": "酣春花見酒・宵",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD276O",
-    "itemName": "ハニーレスト",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "AATR",
     "itemName": "レヴェリー",
     "parts": "AA",
@@ -148,5 +130,17 @@
     "itemName": "いたずらミミン",
     "parts": "",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "A11CKW",
+    "itemName": "【INT+4】ガオウと一緒",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41BZP",
+    "itemName": "【VIT+4】フォー・ユー",
+    "parts": "",
+    "itemGender": "A"
   }
 ]
