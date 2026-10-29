@@ -12,12 +12,12 @@ test('市場画面のJavaScriptが構文的に正しい', () => {
   assert.doesNotThrow(() => new Script(market[2]));
 });
 
-function buildCalculator(owned) {
+function buildCalculator(owned, selectedTypes = null) {
   const start = market[2].indexOf('  function readOwnedBest()');
   const end = market[2].indexOf('\n  function buildListing(',start);
   assert.ok(start >= 0 && end > start);
   const snippet = market[2].slice(start,end);
-  const state = { ownedBest:new Map() };
+  const state = { ownedBest:new Map(), efficiencyTypes: selectedTypes };
   const localStorage = { getItem: key => key === 'avatarList' ? JSON.stringify(owned) : null };
   const factory = new Function('state','localStorage',snippet+'\nreturn { readOwnedBest, improvement, totalImprovement, gainPerHC };');
   const c = factory(state,localStorage);
@@ -52,4 +52,40 @@ test('費用対効果の降順ソートが選択肢に用意される',()=>{
   assert.match(html, /value="gainPerHC"/);
   assert.match(market[2], /gainPerHC: \(a,b\) => gainPerHC\(b\) - gainPerHC\(a\)/);
   assert.match(market[2], /addEventListener\('puretomo:owned-changed', filterListings\)/);
+});
+
+test('INTだけを選択するとPOWやVITは加算しない',()=>{
+  const owned=[
+    {partText:'帽子',type1:'INT',type2:'なし',increase:'2'},
+    {partText:'服',type1:'POW',type2:'なし',increase:'1'},
+  ];
+  const listing={price:100,items:[
+    {part:'帽子',type:'INT',value:5},
+    {part:'服',type:'POW',value:4},
+    {part:'靴',type:'VIT',value:2},
+  ]};
+  const intOnly=buildCalculator(owned,new Set(['INT']));
+  assert.equal(intOnly.totalImprovement(listing),3);
+  assert.equal(intOnly.gainPerHC(listing),.03);
+});
+
+test('複数パラメータを選ぶと差分を合計して1HCで割る',()=>{
+  const owned=[{partText:'帽子',type1:'INT',type2:'なし',increase:'2'}];
+  const listing={price:200,items:[
+    {part:'帽子',type:'INT',value:6},  // +4
+    {part:'服',type:'POW',value:3},    // +3
+    {part:'靴',type:'VIT',value:7},    // 未選択
+  ]};
+  const both=buildCalculator(owned,new Set(['INT','POW']));
+  assert.equal(both.totalImprovement(listing),7);
+  assert.equal(both.gainPerHC(listing),.035);
+  assert.equal(buildCalculator(owned,new Set()).gainPerHC(listing),0);
+});
+
+test('複数選択UIは全選択・解除と保存に対応',()=>{
+  for (const field of ['efficiencyParameters','efficiencyParameterOptions','efficiencySelectAll','efficiencyClearAll']) {
+    assert.match(html,new RegExp('id="'+field+'"'));
+  }
+  assert.match(market[2],/localStorage\.setItem\('efficiencyParameters'/);
+  assert.match(market[2],/state\.efficiencyTypes\s*=\s*new Set/);
 });
