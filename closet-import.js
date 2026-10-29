@@ -36,7 +36,14 @@
     let localMaster = [];
     try { localMaster = JSON.parse(localStorage.getItem('puretomoLocalItemMaster') || '[]'); } catch { localMaster = []; }
     if(!Array.isArray(localMaster)) localMaster=[];
-    const byCode = new Map([...schema,...localMaster].filter(x => x?.itemCode).map(item => [item.itemCode,item]));
+    // 公式クローゼット側の個別検索で確認された情報のみローカルマスターに反映。
+    const incomingMaster = Array.isArray(source?.masterUpdates) ? source.masterUpdates : [];
+    const accepted = incomingMaster.filter(x => /^[a-z0-9]+$/i.test(x?.itemCode || '') &&
+      namesHasCode(x.parts) && /^【[^+】]+\+[^】]+】/.test(x.itemName || ''));
+    function namesHasCode(code) { return labelsText.split(/\r?\n/).slice(1).some(line => line.split(',')[0].trim() === code); }
+    const mergedMaster = new Map([...localMaster,...accepted].map(item => [item.itemCode,item]));
+    localStorage.setItem('puretomoLocalItemMaster', JSON.stringify([...mergedMaster.values()]));
+    const byCode = new Map([...schema,...mergedMaster.values()].filter(x => x?.itemCode).map(item => [item.itemCode,item]));
     const names = new Map(labelsText.split(/\r?\n/).slice(1)
       .map(row => row.split(',').map(v => v.trim())).filter(row => row.length >= 2));
     let existing;
@@ -166,6 +173,33 @@
         }
         if(items.length!==maxCount || seen.size!==maxCount)
           throw Error('全件取得に失敗しました: '+items.length+'/'+maxCount+'件');
+        // 未登録のステータス付きコードを個別APIで確認する。最大15件、逐次通信。
+        // CORS制限・出品なし等で取得できなければ推測せず保留。
+        let masterUpdates=[];
+        try {
+          const masterResponse=await fetch(targetOrigin+'/pure/itemCodeSchema.json');
+          const masterData=masterResponse.ok?await masterResponse.json():[];
+          const knownCodes=new Set(masterData.map(row=>row.itemCode));
+          const missing=[...new Map(items.filter(row=>row.code &&
+            /^【[^+】]+\+[^】]+】/.test(row.name||'')&&!knownCodes.has(row.code))
+            .map(row=>[row.code,row])).values()].slice(0,15);
+          for(const [index,item] of missing.entries()){
+            if(index || pages) await new Promise(resolve=>setTimeout(resolve,1200));
+            try {
+              const url='https://puretomo-ap.hange.jp/api/noauth/bazaar/itemDetail.json?category=hancoin&itemCode='+
+                encodeURIComponent(item.code)+'&pageCount=1';
+              const response=await fetch(url,{credentials:'include'});
+              if(!response.ok)continue;
+              const detail=(await response.json()).result;
+              const info=detail?.itemInfo;
+              if(info?.bagcat && /^【[^+】]+\+[^】]+】/.test(info.itemName||item.name)) {
+                masterUpdates.push({itemCode:item.code,itemName:info.itemName||item.name,
+                  parts:info.bagcat,itemGender:info.itemGender||null});
+                item.bagcat=info.bagcat;
+              }
+            } catch(_) { /* 未確認コードは登録せず保留 */ }
+          }
+        } catch(_) { /* マスターにアクセスできない場合は未確認として保留 */ }
         const sanitized=items.map(item=>({
           itemCode:String(item.itemCode||item.code||'').slice(0,80),
           itemName:String(item.itemName||item.name||'').slice(0,250),
@@ -174,7 +208,7 @@
         })).filter(item=>item.itemCode);
         if(sanitized.length!==maxCount)
           throw Error('データ変換が不完全です: '+sanitized.length+'/'+maxCount+'件');
-        const data={type:'puretomo:closet-data',version:1,items:sanitized};
+        const data={type:'puretomo:closet-data',version:1,items:sanitized,masterUpdates};
         let acked=false;
         const ack=event=>{
           if(event.origin===targetOrigin && event.data?.type==='puretomo:closet-received') acked=true;
