@@ -37,7 +37,7 @@ export function compactDetail(raw) {
 
 /** キャッシュがまだない初回のみ、公開済みJSONを仮の初期データとして利用。 */
 export function seedState(listings, schema, another = []) {
-  const lookup = new Map([...schema, ...another].map(x => [x.itemCode, x]));
+  const lookup = new Map([...another, ...schema].filter(x => x?.itemCode).map(x => [x.itemCode, x]));
   const offers = new Map();
   for (const listing of listings) {
     for (const code of listing.listingItems || []) {
