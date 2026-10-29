@@ -83,7 +83,7 @@ export function chooseDetails(rows, entries, nowMs, limit = REQUEST_LIMIT) {
   const order = (a,b) => a.last - b.last || b.row.listingCount - a.row.listingCount || a.row.itemCode.localeCompare(b.row.itemCode);
   changed.sort(order);
   stale.sort(order);
-  const reserve = stale.length ? Math.min(3, Math.max(0, limit - 1)) : 0;
+  const reserve = stale.length ? Math.min(3, Math.max(0, Math.floor(limit * 0.4))) : 0;
   const selected = changed.splice(0, Math.max(0,limit - reserve));
   selected.push(...stale.splice(0,limit - selected.length));
   selected.push(...changed.splice(0,limit - selected.length));
@@ -124,6 +124,7 @@ export async function collectIncrementalBazaarData({
   const entries = state.entries;
   const nowMs = now.getTime();
   if (!Number.isFinite(nowMs)) throw new Error('実行日時が不正です');
+  const knownBefore = new Set(Object.keys(entries));
   const chosen = chooseDetails(rows,entries,nowMs,requestLimit);
   // キュー内で1件ずつ取得し、リクエスト完了後に待機する（同時通信なし）。
   for (const [index,row] of chosen.entries()) {
@@ -207,7 +208,7 @@ export async function collectIncrementalBazaarData({
         'server-time':tradeData.serverTime,
         'listing-count':bazzarList.length,
         'scanned-code-count':rows.length,
-        'new-code-count':chosen.filter(x => !cacheState?.entries?.[x.itemCode]).length,
+        'new-code-count':chosen.filter(x => !knownBefore.has(x.itemCode)).length,
         'schema-code-count':schema.length,
         'detail-request-count':checked,
         'detail-request-limit':requestLimit,
