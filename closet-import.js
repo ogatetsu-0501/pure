@@ -70,7 +70,8 @@
       additions.push(item);
     }
     if(!additions.length) {
-      status.textContent = '所持アバター '+items.length+'点を照合しました。更新が必要なステータスはありません。';
+      status.textContent = '取り込んだ所持品 '+items.length+'件を照合しました。所持最大値の更新はありません。'+
+        '（登録一覧は部位とパラメータごとの最大値に集約されます）';
       return {items:items.length,changes:0};
     }
     if (!window.confirm(
@@ -90,7 +91,7 @@
     localStorage.setItem('avatarList', JSON.stringify(existing));
     window.dispatchEvent(new Event('puretomo:owned-changed'));
     window.refreshOriginalOwned?.();
-    status.textContent = method+'：'+items.length+'点を確認、'+changes+
+    status.textContent = method+'：所持品 '+items.length+'件を照合し、'+changes+
       '件の所持最大値を更新しました。'+
       (nonStatus?'（ステータス対象外 '+nonStatus+'件）':'')+
       (unresolved?'（部位不明 '+unresolved+'件）':'');
@@ -110,9 +111,9 @@
       const target=window.open(targetOrigin+'/pure/#closet-import', 'puretomo-closet-sync');
       let pages=0,items=[];
       try {
-        // 公式クローゼットが使う一覧API。ALLは正規のbagcat値と確認できないため使わない。
-        // closet=S は公式フロントエンドの「ALL」画面で利用されている。
-        const api='https://puretomo-ap.hange.jp/api/closet/itembag.json?closet=S&page=';
+        // 公式クローゼット上で全77件・6ページの取得を検証済み。
+        // closet=S は「全所持品」を示すパラメータではない。
+        const api='https://puretomo-ap.hange.jp/api/closet/itembag.json?bagcat=ALL&page=';
         const load=async page=>{
           const response=await fetch(api+page,{credentials:'include',headers:{Accept:'application/json'}});
           if(!response.ok) throw Error('クローゼットAPI HTTP '+response.status+'。ログイン・Cookie・API通信が制限されている可能性があります');
@@ -122,21 +123,42 @@
           return payload.result;
         };
         const first=await load(1);
-        const maxPage=Math.max(1,Number(first.maxPage)||1);
-        if(maxPage>250)throw Error('ページ数が250を超えました。安全のため停止します');
-        items.push(...first.itemList);pages++;
-        for(let page=2;page<=maxPage;page++){
-          await new Promise(resolve=>setTimeout(resolve,1000));
-          const next=await load(page);
-          items.push(...next.itemList); pages++;
+        const maxPage=Number(first.maxPage);
+        const maxCount=Number(first.maxCount);
+        if(!Number.isInteger(maxPage) || maxPage<1 || maxPage>250)
+          throw Error('全ページ数を確認できません');
+        if(!Number.isInteger(maxCount) || maxCount<0 || maxCount>10000)
+          throw Error('全所持数を確認できません');
+        const seen=new Set();
+        for(let page=1;page<=maxPage;page++){
+          if(page>1)await new Promise(resolve=>setTimeout(resolve,1200));
+          const result=page===1?first:await load(page);
+          if(Number(result.currentPage)!==page ||
+             Number(result.maxCount)!==maxCount ||
+             Number(result.maxPage)!==maxPage) {
+            throw Error('ページ情報が一致しません: '+page);
+          }
+          for(const item of result.itemList){
+            if(!item?.code || item.seq==null)
+              throw Error('アイテムコードまたは個体番号が不正です: '+page);
+            if(seen.has(String(item.seq)))
+              throw Error('重複するアイテムが検出されました: '+page);
+            seen.add(String(item.seq));
+            items.push(item);
+          }
+          pages++;
+          if(items.length>maxCount)throw Error('取得数が総件数を超えました');
         }
+        if(items.length!==maxCount || seen.size!==maxCount)
+          throw Error('全件取得に失敗しました: '+items.length+'/'+maxCount+'件');
         const sanitized=items.map(item=>({
           itemCode:String(item.itemCode||item.code||'').slice(0,80),
           itemName:String(item.itemName||item.name||'').slice(0,250),
           bagcat:String(item.bagcat||'').slice(0,50),
           itemGender:String(item.itemGender||'').slice(0,5),
         })).filter(item=>item.itemCode);
-        if(!sanitized.length)throw Error('所持アバターが取得できませんでした（全ページにitemCodeがありません）');
+        if(sanitized.length!==maxCount)
+          throw Error('データ変換が不完全です: '+sanitized.length+'/'+maxCount+'件');
         const data={type:'puretomo:closet-data',version:1,items:sanitized};
         let acked=false;
         const ack=event=>{
