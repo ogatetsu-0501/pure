@@ -203,3 +203,14 @@ h3 { font-size: 17px; }
 .closet-import-file { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; font-weight: 600; color: #394f62; }
 .closet-import-file input { max-width: 100%; padding: 6px; background: white; border: 1px solid #c5d6e3; border-radius: 4px; }
 #closetImportStatus { margin-bottom: 0; font-weight: 650; color: #285f80; overflow-wrap: anywhere; }
+
+.owned-avatar-cell { min-width: 150px; }
+.owned-avatar-cell img { display: block; width: 56px; height: 56px; object-fit: contain; background: #f7fafc; border: 1px solid #dee7ef; border-radius: 5px; margin-bottom: 5px; }
+.owned-avatar-cell span { display: block; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; color: #334d61; }
+#avatarTable { min-width: 660px; }
+.alias-review { margin: 18px 0; border: 1px solid #d7e2eb; background: #fbfcfe; border-radius: 5px; padding: 15px; }
+.alias-review h3 { margin: 0 0 8px; font-size: 16px; }
+.alias-review table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.alias-review th,.alias-review td { text-align: left; vertical-align: top; padding: 8px; border-bottom: 1px solid #e0e8ee; }
+.alias-review code { white-space: nowrap; }
+.alias-review small { color: #5f7485; }
