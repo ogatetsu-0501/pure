@@ -10,7 +10,11 @@ export function statTag(name) {
 }
 
 export const DEFAULT_ALIASES = {
+  'AT/DF':['ATK','DEF'],
+  'P/I':['POW','INT'],
   'P/L':['POW','LUK'],
+  'S/L':['SPD','LUK'],
+  'V/L':['VIT','LUK'],
   'ALL':['POW','INT','SPD','VIT','LUK'],
 };
 
