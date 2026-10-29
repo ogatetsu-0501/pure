@@ -1,4 +1,4 @@
-name: Inspect closet client program only
+name: Inspect closet's public API calls
 on:
   push:
     paths:
@@ -10,20 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Inspect publicly available closet JavaScript only
+      - name: Find closet endpoint names in publicly served JS only
         run: |
           node --input-type=module <<'NODE'
-          const url='https://puretomo.hange.jp/_next/static/chunks/pages/closet-4266d572a226d5b66917.js';
-          const response=await fetch(url,{signal:AbortSignal.timeout(16000)});
+          const url='https://puretomo.hange.jp/_next/static/chunks/pages/_app-1ab69aa5a650374c9816.js';
+          const response=await fetch(url,{signal:AbortSignal.timeout(22000)});
           const js=await response.text();
-          console.log('CLOSET BUNDLE:',response.status,js.length);
-          const words=['itemList','getMy','closet','useQuery','getCloset','getItems','getAvatar','itemCode','avatarCode','bagcat','api/','axios','pageCount','pageSize','currentPage','userId','itemCategory','myItems'];
-          for(const word of words) {
-            let pos=-1,found=0;
-            while((pos=js.indexOf(word,pos+1))>=0 && found<7) {
-              const snippet=js.slice(Math.max(0,pos-180),Math.min(js.length,pos+240)).replaceAll(/(?:password|authorization|accessToken|idToken)[^,;}]*/gi,'[hidden]');
-              console.log('MATCH',word,'at',pos,':',snippet);
-              found++;
+          console.log('APP CHUNK HTTP',response.status,'SIZE',js.length);
+          const names=['api/closet','api/avatar','api/coordinate','closetItem','itemtrade','itemCode','myItem','inventory','avatarList','closet'];
+          for (const word of names) {
+            const count=js.split(word).length-1;
+            console.log('TERM',word,'COUNT',count);
+            let i=-1,k=0;
+            while((i=js.indexOf(word,i+1))>=0&&k<5){
+              console.log('CONTEXT',word,'AT',i,js.slice(Math.max(0,i-130),i+180));
+              k++;
             }
           }
           NODE
