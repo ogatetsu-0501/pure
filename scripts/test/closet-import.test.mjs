@@ -47,8 +47,8 @@ test('スマホChrome向けブックマークURLは実行可能な1行のJavaScr
   const url='javascript:('+bookmarkletCode+')()';
   assert.doesNotThrow(()=>new Script(url.slice('javascript:'.length)));
   assert.equal(url.includes('\n'),false);
-  assert.match(url,/closet=S&page=/);
-  assert.doesNotMatch(url,/bagcat=ALL/);
+  assert.match(url,/bagcat=ALL&page=/);
+  assert.doesNotMatch(url,/closet=S/);
 });
 
 test('マスターの部位をJSONより優先し、LDの下衣装をボトムスとして判定',async()=>{
@@ -60,4 +60,12 @@ test('マスターの部位をJSONより優先し、LDの下衣装をボトム�
   assert.equal(item.parts,'L');
   assert.equal(labels.get(item.parts),'ボトムス');
   assert.match(script,/const bagcat = known\?\.parts \|\| item\.bagcat \|\| '';/);
+});
+
+test('全所持品のページ数と総件数を確認し、欠落や重複を拒否する',()=>{
+  assert.match(script,/Number\(first\.maxCount\)/);
+  assert.match(script,/Number\(result\.currentPage\)!==page/);
+  assert.match(script,/seen\.has\(String\(item\.seq\)\)/);
+  assert.match(script,/items\.length!==maxCount/);
+  assert.match(script,/1200/);
 });
