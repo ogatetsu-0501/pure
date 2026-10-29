@@ -853,6 +853,7 @@ p, li { color: #deddd9; }
           <table id="avatarTable">
             <thead>
               <tr>
+                <th>アバター</th>
                 <th>パーツ</th>
                 <th>種類①</th>
                 <th>種類②</th>
@@ -1327,6 +1328,21 @@ p, li { color: #deddd9; }
             incMatch  // ▼ ここを fInc===null || Number(av.increase)===fInc から置き換え
           ) {
             const tr = document.createElement("tr");
+            const tdAvatar = document.createElement("td");
+            tdAvatar.className = "owned-avatar-cell";
+            if(av.itemCode && /^[a-z0-9]+$/i.test(av.itemCode)) {
+              const img = document.createElement("img");
+              img.loading = "lazy";
+              img.alt = av.itemName || av.itemCode;
+              img.src = "https://puretomo-image.hange.jp/disp/" + av.itemCode.toLowerCase() + ".gif";
+              img.width = 56;
+              img.height = 56;
+              tdAvatar.appendChild(img);
+            }
+            const avatarName = document.createElement("span");
+            avatarName.textContent = av.itemName || (av.itemCode ? av.itemCode : "手動登録");
+            tdAvatar.appendChild(avatarName);
+            tr.appendChild(tdAvatar);
             ["partText","type1","type2","increase"].forEach(key => {
               const td = document.createElement("td");
               td.textContent = av[key];
