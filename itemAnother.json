@@ -48,24 +48,6 @@
     "itemGender": "F"
   },
   {
-    "itemCode": "LD25QC",
-    "itemName": "ふぐがーる",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "E41S2",
-    "itemName": "ふぐクンろぼ",
-    "parts": "E4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E41N6",
-    "itemName": "ぴよぴよハロウィン",
-    "parts": "E4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "LC2A24T",
     "itemName": "クラシックピュア【限定品】",
     "parts": "",
@@ -98,6 +80,12 @@
   {
     "itemCode": "LD148Y",
     "itemName": "ゆるっとパーカー",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "AE17A",
+    "itemName": "【HP+100】Ｆハット",
     "parts": "",
     "itemGender": "M"
   }

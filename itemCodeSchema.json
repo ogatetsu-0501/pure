@@ -17392,5 +17392,11 @@
     "itemName": "【I／V+2】アルヴフェイス",
     "parts": "F",
     "itemGender": "M"
+  },
+  {
+    "itemCode": "A242X",
+    "itemName": "【DRN+2】クライゴスト盾",
+    "parts": "A2",
+    "itemGender": "A"
   }
 ]
