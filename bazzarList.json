@@ -1343,14 +1343,6 @@
     ]
   },
   {
-    "bazaarId": "f8369b0091e7409db486f59104cba82b",
-    "hancoin": 300,
-    "sellEndDate": "2026/11/04 20:26",
-    "listingItems": [
-      "A24EB"
-    ]
-  },
-  {
     "bazaarId": "18e68d492c614d698fa877affdb3ff7d",
     "hancoin": 100,
     "sellEndDate": "2026/11/04 20:26",
@@ -2101,17 +2093,6 @@
     "sellEndDate": "2026/10/31 09:31",
     "listingItems": [
       "E21DEK"
-    ]
-  },
-  {
-    "bazaarId": "6fd37e9f9fc941ef8763dbe4d3ee5313",
-    "hancoin": 100,
-    "sellEndDate": "2026/10/31 05:52",
-    "listingItems": [
-      "HD218B2",
-      "E1X9O",
-      "B118G",
-      "LC2EMY"
     ]
   },
   {
