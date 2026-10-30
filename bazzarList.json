@@ -418,17 +418,6 @@
     ]
   },
   {
-    "bazaarId": "dd971cf08e314f389ceb42d4bfeeb043",
-    "hancoin": 300,
-    "sellEndDate": "2026/10/31 00:02",
-    "listingItems": [
-      "AE2W4",
-      "LC2EG2",
-      "AB2IH",
-      "P122GD"
-    ]
-  },
-  {
     "bazaarId": "bea12b09f70f44f195aede885aa7d1af",
     "hancoin": 100,
     "sellEndDate": "2026/11/02 21:09",
@@ -794,6 +783,15 @@
     ]
   },
   {
+    "bazaarId": "638b23784a024a4e8e83b3ecdf52ca07",
+    "hancoin": 200,
+    "sellEndDate": "2026/11/01 13:56",
+    "listingItems": [
+      "CT28Q",
+      "LC2EG2"
+    ]
+  },
+  {
     "bazaarId": "d596f1182d714a3394c083dc2d2887fe",
     "hancoin": 300,
     "sellEndDate": "2026/11/05 23:37",
@@ -802,15 +800,6 @@
       "A49AO",
       "LC2EG2",
       "CT2LF"
-    ]
-  },
-  {
-    "bazaarId": "638b23784a024a4e8e83b3ecdf52ca07",
-    "hancoin": 200,
-    "sellEndDate": "2026/11/01 13:56",
-    "listingItems": [
-      "CT28Q",
-      "LC2EG2"
     ]
   },
   {
