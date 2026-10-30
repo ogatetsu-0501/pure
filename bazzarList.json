@@ -424,17 +424,6 @@
     ]
   },
   {
-    "bazaarId": "dd076bb52b5242f9a2355387c00e5409",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/02 21:17",
-    "listingItems": [
-      "A13U5",
-      "A24IS",
-      "AE2W4",
-      "A311YQ"
-    ]
-  },
-  {
     "bazaarId": "bea12b09f70f44f195aede885aa7d1af",
     "hancoin": 100,
     "sellEndDate": "2026/11/02 21:09",
@@ -443,6 +432,17 @@
       "CT1H3",
       "P114ZW",
       "AE2W4"
+    ]
+  },
+  {
+    "bazaarId": "dd076bb52b5242f9a2355387c00e5409",
+    "hancoin": 100,
+    "sellEndDate": "2026/11/02 21:17",
+    "listingItems": [
+      "A13U5",
+      "A24IS",
+      "AE2W4",
+      "A311YQ"
     ]
   },
   {
