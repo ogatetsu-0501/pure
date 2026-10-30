@@ -1,11 +1,5 @@
 [
   {
-    "itemCode": "AATR",
-    "itemName": "レヴェリー",
-    "parts": "AA",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "P1111OK",
     "itemName": "ハチワレのはっち・H",
     "parts": "P",
@@ -33,24 +27,6 @@
     "itemCode": "A41AI7",
     "itemName": "ハロウィンナイトセメタリー",
     "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AB1CXD",
-    "itemName": "安息の地・アナザー",
-    "parts": "AB",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AB10O",
-    "itemName": "沈黙の薔薇",
-    "parts": "AB",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AB12TJ",
-    "itemName": "占いの間絨毯",
-    "parts": "AB",
     "itemGender": "A"
   },
   {
