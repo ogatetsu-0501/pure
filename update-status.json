@@ -1,9 +1,9 @@
 {
-  "fetched-at": "2026-10-30T15:08:49.264Z",
-  "server-time": "2026-10-31T00:08:48.670014",
+  "fetched-at": "2026-10-30T15:13:46.631Z",
+  "server-time": "2026-10-31T00:13:45.755177",
   "listing-count": 210,
-  "scanned-code-count": 361,
-  "new-code-count": 0,
+  "scanned-code-count": 359,
+  "new-code-count": 1,
   "schema-code-count": 2900,
   "detail-request-count": 15,
   "detail-request-limit": 15,
