@@ -474,17 +474,6 @@
     ]
   },
   {
-    "bazaarId": "d596f1182d714a3394c083dc2d2887fe",
-    "hancoin": 300,
-    "sellEndDate": "2026/11/05 23:37",
-    "listingItems": [
-      "AFZJ",
-      "A49AO",
-      "LC2EG2",
-      "CT2LF"
-    ]
-  },
-  {
     "bazaarId": "dd971cf08e314f389ceb42d4bfeeb043",
     "hancoin": 300,
     "sellEndDate": "2026/10/31 00:02",
@@ -502,6 +491,17 @@
     "listingItems": [
       "CT28Q",
       "LC2EG2"
+    ]
+  },
+  {
+    "bazaarId": "d596f1182d714a3394c083dc2d2887fe",
+    "hancoin": 300,
+    "sellEndDate": "2026/11/05 23:37",
+    "listingItems": [
+      "AFZJ",
+      "A49AO",
+      "LC2EG2",
+      "CT2LF"
     ]
   },
   {
