@@ -118,5 +118,35 @@
     "itemName": "[VG]デイブレイクブルー",
     "parts": "",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "P116TU",
+    "itemName": "リフィー",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "ADW5",
+    "itemName": "でかおしゃれサングラス・ラブ",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P11YXK",
+    "itemName": "中秋桜香",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "A212CW",
+    "itemName": "魅惑のペロおクチ",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "A212CX",
+    "itemName": "魅惑のペロおクチ・s",
+    "parts": "",
+    "itemGender": "M"
   }
 ]
