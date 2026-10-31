@@ -172,5 +172,17 @@
     "itemName": "気分転換★らぶずっきゅん",
     "parts": "",
     "itemGender": "M"
+  },
+  {
+    "itemCode": "P117A2",
+    "itemName": "ギルヴァ・ナイトメア・18th",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "P111BE2",
+    "itemName": "【HPR+3％】ふわウルフ",
+    "parts": "",
+    "itemGender": "M"
   }
 ]
