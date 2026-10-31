@@ -1405,17 +1405,6 @@
     ]
   },
   {
-    "bazaarId": "68f3dcb5547f4e1982d9f257583be6a2",
-    "hancoin": 300,
-    "sellEndDate": "2026/11/07 11:36",
-    "listingItems": [
-      "AFW8",
-      "E31SC",
-      "CT1J5",
-      "AA1S4"
-    ]
-  },
-  {
     "bazaarId": "9d44c18ff85f43f283b36222f7e44070",
     "hancoin": 100,
     "sellEndDate": "2026/11/05 23:45",
@@ -1424,6 +1413,17 @@
       "AA1S4",
       "A31172",
       "LD148Y"
+    ]
+  },
+  {
+    "bazaarId": "68f3dcb5547f4e1982d9f257583be6a2",
+    "hancoin": 300,
+    "sellEndDate": "2026/11/07 11:36",
+    "listingItems": [
+      "AFW8",
+      "E31SC",
+      "CT1J5",
+      "AA1S4"
     ]
   },
   {
