@@ -38,24 +38,45 @@ export async function fetchJsonWithRetry(url, { fetchImpl = fetch, retryCount = 
 }
 
 // 公開データの正本は同じリポジトリ内のJSONです。
-export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot, now } = {}) {
+export async function runUpdate({ loadTrade, loadMaleTrade, loadDetail, dataRoot = projectRoot, now } = {}) {
   const root = dataRoot;
-  // 認証情報はActions Secretsからのみ受け取り、ログや保存ファイルに出力しません。
-  const cookie = process.env.HANGE_SESSION_COOKIE;
-  if (!cookie && !loadTrade) throw new Error('HANGE_SESSION_COOKIE が設定されていません');
-  const [schema, statusesCsv, labelsCsv, maleHistory, femaleHistory, publicTradeData, maleTradeData] = await Promise.all([
+  // 公開一覧は必須です。ここが失敗した場合は旧データを保護して更新を停止します。
+  const [schema, statusesCsv, labelsCsv, maleHistory, femaleHistory, publicTradeData] = await Promise.all([
     readFile(path.join(root, 'itemCodeSchema.json'), 'utf8').then(JSON.parse),
     readFile(path.join(root, 'type_options.csv'), 'utf8'),
     readFile(path.join(root, 'bagcat_labels.csv'), 'utf8'),
     readFile(path.join(root, 'malebuzzerHistory.json'), 'utf8').then(JSON.parse),
     readFile(path.join(root, 'femalebuzzerHistory.json'), 'utf8').then(JSON.parse),
     loadTrade ? loadTrade() : fetchJsonWithRetry(TRADE_URL),
-    loadTrade ? null : fetchJsonWithRetry(MALE_TRADE_URL, { headers: { Cookie: cookie, Accept: 'application/json' } }),
   ]);
-  // 既存テストではloadTradeで公開一覧のみを注入可能にし、通常実行では両方検証します。
-  const { tradeData, maleCodes } = maleTradeData
-    ? mergeTradeLists(publicTradeData, maleTradeData)
-    : { tradeData: publicTradeData, maleCodes: new Set() };
+  const isValidPublicData = publicTradeData?.status === 'SUCCESS'
+    && Array.isArray(publicTradeData?.result?.itemList);
+  if (!isValidPublicData) throw new Error('公開一覧APIの応答が不正です');
+
+  // 男性用APIは任意です。認証期限切れなどでも公開一覧の更新を止めません。
+  // CookieはGitHub Actions Secretsで管理し、ログや保存データには出力しません。
+  const cookie = process.env.HANGE_SESSION_COOKIE;
+  const shouldLoadMale = !!loadMaleTrade || (!!cookie && !loadTrade);
+  let tradeData = publicTradeData;
+  let maleCodes = new Set();
+  let maleApiMode = 'public-only';
+  if (shouldLoadMale) {
+    try {
+      const maleTradeData = await (loadMaleTrade
+        ? loadMaleTrade()
+        : fetchJsonWithRetry(MALE_TRADE_URL, { headers: { Cookie: cookie, Accept: 'application/json' } }));
+      const merged = mergeTradeLists(publicTradeData, maleTradeData);
+      tradeData = merged.tradeData;
+      maleCodes = merged.maleCodes;
+      maleApiMode = 'full';
+    } catch (error) {
+      // 認証失敗・取得失敗・一覧不完全のいずれでも、男性用データを混ぜずに公開モードへ移行。
+      console.warn('男性用一覧を取得できませんでした。非ログインAPIだけで更新します:', error.message);
+    }
+  } else {
+    console.log('男性用Cookieなし。非ログインAPIだけで更新します');
+  }
+  console.log('バザー取得モード:', maleApiMode);
   const cachePath = path.join(root, CACHE_FILE);
   let cacheState = null;
   try {
@@ -70,6 +91,9 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
   const { data: result, cacheState: updatedCache, statistics } = await collectIncrementalBazaarData({
     schema, another, previousListings, statusesCsv, labelsCsv, maleHistory, femaleHistory,
     tradeData, cacheState,
+    // 認証切れの間は男性専用キャッシュと価格履歴を保持し、公開一覧だけ更新します。
+    preserveMissingCache: maleApiMode === 'public-only',
+    updateMaleHistory: maleApiMode === 'full',
     loadDetail: loadDetail || (code => fetchJsonWithRetry(
       DETAIL_URL + encodeURIComponent(code) + '&pageCount=10000',
       { headers: maleCodes.has(code) ? { Cookie: cookie, Accept: 'application/json' } : undefined },
@@ -81,6 +105,7 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
   const newCacheFile = cachePath + '.tmp';
   await writeFile(newCacheFile, gzipSync(JSON.stringify(updatedCache), { level: 6 }));
   await rename(newCacheFile, cachePath);
+  result['update-status.json']['male-api-mode'] = maleApiMode;
   console.log('差分取得:', JSON.stringify(statistics));
   // 全データの取得が完了した場合に限って、変更されたJSONを更新します。
   let hasChanged = false;
@@ -99,11 +124,19 @@ export async function runUpdate({ loadTrade, loadDetail, dataRoot = projectRoot,
     await rename(temporary, target);
     console.log('更新: ' + filename);
   }
-  if (hasChanged) {
-    const target = path.join(root, 'update-status.json');
-    const temp = target + '.tmp';
+  // データ件数が同じでも取得モードが切り替わったことはサイトへ反映します。
+  const statusPath = path.join(root, 'update-status.json');
+  const previousStatus = await readFile(statusPath, 'utf8')
+    .then(JSON.parse)
+    .catch(error => {
+      if (error.code === 'ENOENT' || error instanceof SyntaxError) return {};
+      throw error;
+    });
+  const hasModeChanged = previousStatus['male-api-mode'] !== maleApiMode;
+  if (hasChanged || hasModeChanged) {
+    const temp = statusPath + '.tmp';
     await writeFile(temp, JSON.stringify(result['update-status.json'], null, 2), 'utf8');
-    await rename(temp, target);
+    await rename(temp, statusPath);
     console.log('更新: update-status.json');
   }
   console.log('バザー集計完了: ' + result['bazzarList.json'].length + '件');

@@ -117,3 +117,25 @@ test('未取得の複合ステータスを既取得の変更項目より優先�
   const entries={ORDINARY:{listingCount:1,checkedAt:now.getTime()-3600000,detail:{itemInfo:{itemName:'【HP+5】既存'},tradeItemList:[]}}};
   assert.deepEqual(chooseDetails(rows,entries,now.getTime(),1).map(row=>row.itemCode),['COMPOUND']);
 });
+
+test('公開限定モードは男性キャッシュを保持し、一覧にない出品を表示しない',async()=>{
+  const male=compactDetail(detail('MALE'));
+  const publicItem=compactDetail(detail('PUBLIC'));
+  const cacheState={version:1,entries:{
+    MALE:{listingCount:1,checkedAt:now.getTime(),detail:male},
+    PUBLIC:{listingCount:1,checkedAt:now.getTime(),detail:publicItem},
+  }};
+  const maleHistory={INT:{'5':{'アクセ1':{'2026-10-28T00:00:00Z':500}}}};
+  const before=JSON.stringify(maleHistory);
+  const result=await collectIncrementalBazaarData(options({
+    cacheState, maleHistory,
+    tradeData:{serverTime:'2026-10-29T16:20:00',result:{itemList:[avatar('PUBLIC')]}},
+    preserveMissingCache:true,
+    updateMaleHistory:false,
+    loadDetail:async()=>{throw Error('キャッシュ済みのため詳細取得は禁止');},
+  }));
+  assert.equal(result.data['bazzarList.json'].length,1);
+  assert.equal(result.data['bazzarList.json'][0].bazaarId,'bazaar-PUBLIC');
+  assert.equal(Object.hasOwn(result.cacheState.entries,'MALE'),true);
+  assert.equal(JSON.stringify(result.data['malebuzzerHistory.json']),before);
+});

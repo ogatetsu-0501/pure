@@ -110,6 +110,7 @@ export async function collectIncrementalBazaarData({
   schema, another = [], previousListings = [], statusesCsv, labelsCsv,
   maleHistory, femaleHistory, tradeData, cacheState,
   loadDetail, now = new Date(), requestLimit = REQUEST_LIMIT,
+  preserveMissingCache = false, updateMaleHistory = true,
   requestGapMs = REQUEST_GAP_MS, wait = ms => new Promise(resolve => setTimeout(resolve,ms)),
 }) {
   if (!Array.isArray(tradeData?.result?.itemList)) throw new Error('一覧APIのitemListが不正です');
@@ -158,10 +159,12 @@ export async function collectIncrementalBazaarData({
     }
   }
 
-  // 最新一覧にいないコードのキャッシュは無効化する（売り切れを復活させない）。
-  // キャッシュは販売中かつステータス対象のコードだけを保持する。
-  for(const code of Object.keys(entries)) {
-    if(!countByCode.has(code)) delete entries[code];
+  // 公開限定モードでは男性専用の過去キャッシュを消さず、次回の認証復帰に備える。
+  // 表示データは常に今回の一覧コードだけで作るため、古い男性出品は復活しない。
+  if (!preserveMissingCache) {
+    for (const code of Object.keys(entries)) {
+      if (!countByCode.has(code)) delete entries[code];
+    }
   }
 
   const bazaarMap = new Map();
@@ -208,7 +211,8 @@ export async function collectIncrementalBazaarData({
   const statuses = parseStatuses(statusesCsv);
   const labels = parseBagcatLabels(labelsCsv);
   const {lowestMale,lowestFemale} = buildLowestPriceMaps(bazzarList,schema,statuses,labels);
-  mergeAndCleanHistory(lowestMale,maleHistory,tradeData.serverTime,now);
+  // 公開限定モードで男性最安値を誤って履歴に記録しない。
+  if (updateMaleHistory) mergeAndCleanHistory(lowestMale,maleHistory,tradeData.serverTime,now);
   mergeAndCleanHistory(lowestFemale,femaleHistory,tradeData.serverTime,now);
 
   const checked = chosen.length;
