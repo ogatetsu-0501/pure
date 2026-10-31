@@ -795,17 +795,6 @@
     ]
   },
   {
-    "bazaarId": "948d6bfafde742b08f3f26892d63c813",
-    "hancoin": 100,
-    "sellEndDate": "2026/10/31 14:29",
-    "listingItems": [
-      "CT2IG",
-      "E313D",
-      "B2DL",
-      "E41NP"
-    ]
-  },
-  {
     "bazaarId": "14473972bbed4be89e3fa5a389bb54de",
     "hancoin": 100,
     "sellEndDate": "2026/11/07 12:07",
@@ -2694,14 +2683,6 @@
       "AF12H",
       "A14HV",
       "LC2EDZ"
-    ]
-  },
-  {
-    "bazaarId": "d09deae8325f4eb8a3701c60ffb7fee6",
-    "hancoin": 300,
-    "sellEndDate": "2026/10/31 14:33",
-    "listingItems": [
-      "CT2GE"
     ]
   }
 ]
