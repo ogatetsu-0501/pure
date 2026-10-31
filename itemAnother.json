@@ -70,5 +70,29 @@
     "itemName": "【HP+100】Ｆハット",
     "parts": "",
     "itemGender": "M"
+  },
+  {
+    "itemCode": "PA2AN",
+    "itemName": "プリティプリティ",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "HC2B8D",
+    "itemName": "ゆるパーカー（緑）",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LC2E2M",
+    "itemName": "【UNi】ルーズdeキュート",
+    "parts": "",
+    "itemGender": "F"
   }
 ]
