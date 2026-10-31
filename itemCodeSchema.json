@@ -17428,5 +17428,11 @@
     "itemName": "【SPD+2】スノーワンピ上",
     "parts": "H",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "CT21CL0",
+    "itemName": "【LUK+2】憩いの場所",
+    "parts": "CT",
+    "itemGender": "F"
   }
 ]
