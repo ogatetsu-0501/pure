@@ -17416,5 +17416,17 @@
     "itemName": "【INT+2】ルルシック上",
     "parts": "H",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "E21C6H",
+    "itemName": "【INT+2】お昼寝らいわん",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "HD21BDZ",
+    "itemName": "【SPD+2】スノーワンピ上",
+    "parts": "H",
+    "itemGender": "F"
   }
 ]
