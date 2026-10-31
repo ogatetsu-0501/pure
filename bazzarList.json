@@ -1887,11 +1887,14 @@
     ]
   },
   {
-    "bazaarId": "b677f483c3f4465189366073c77c92eb",
+    "bazaarId": "37a5ddab388e4699b780ed2df87f4173",
     "hancoin": 2000,
-    "sellEndDate": "2026/11/01 02:57",
+    "sellEndDate": "2026/11/06 23:30",
     "listingItems": [
-      "A14TM"
+      "AB11WY",
+      "AA3LW",
+      "E411LO",
+      "E411X0"
     ]
   },
   {
@@ -1903,17 +1906,6 @@
       "A14TM",
       "A26AD",
       "A322FU"
-    ]
-  },
-  {
-    "bazaarId": "37a5ddab388e4699b780ed2df87f4173",
-    "hancoin": 2000,
-    "sellEndDate": "2026/11/06 23:30",
-    "listingItems": [
-      "AB11WY",
-      "AA3LW",
-      "E411LO",
-      "E411X0"
     ]
   },
   {
@@ -2451,14 +2443,6 @@
     "sellEndDate": "2026/11/04 18:31",
     "listingItems": [
       "AA373"
-    ]
-  },
-  {
-    "bazaarId": "041f17e781a34b95b818ce32635e79b2",
-    "hancoin": 2000,
-    "sellEndDate": "2026/11/01 02:57",
-    "listingItems": [
-      "E11KG"
     ]
   },
   {
