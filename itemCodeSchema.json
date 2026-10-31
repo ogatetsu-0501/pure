@@ -17410,5 +17410,11 @@
     "itemName": "【POW+5】寒さへっちゃら",
     "parts": "E2",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "HD21BRG",
+    "itemName": "【INT+2】ルルシック上",
+    "parts": "H",
+    "itemGender": "F"
   }
 ]

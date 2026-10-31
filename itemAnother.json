@@ -172,5 +172,17 @@
     "itemName": "げじねこサイクリング",
     "parts": "",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "P1218HU",
+    "itemName": "【復刻】フェザリア・リノン",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A218WM",
+    "itemName": "ビターシュガーリボン",
+    "parts": "",
+    "itemGender": "A"
   }
 ]
