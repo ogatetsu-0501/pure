@@ -17398,5 +17398,17 @@
     "itemName": "【DRN+2】クライゴスト盾",
     "parts": "A2",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "A11DEG",
+    "itemName": "【POW+2】内緒の招待状",
+    "parts": "A1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E21BDX",
+    "itemName": "【POW+5】寒さへっちゃら",
+    "parts": "E2",
+    "itemGender": "A"
   }
 ]
