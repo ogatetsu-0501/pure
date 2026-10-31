@@ -100,5 +100,23 @@
     "itemName": "[E]ミストグレイ",
     "parts": "",
     "itemGender": "M"
+  },
+  {
+    "itemCode": "P1211IT",
+    "itemName": "ガーリィキャンディーツイン",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "B211XK",
+    "itemName": "[VG]デイブレイクブルー・s",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "B211XJ",
+    "itemName": "[VG]デイブレイクブルー",
+    "parts": "",
+    "itemGender": "F"
   }
 ]
