@@ -17434,5 +17434,11 @@
     "itemName": "【LUK+2】憩いの場所",
     "parts": "CT",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "A11BZK",
+    "itemName": "【LUK+2】匂いに誘われて",
+    "parts": "A1",
+    "itemGender": "A"
   }
 ]
