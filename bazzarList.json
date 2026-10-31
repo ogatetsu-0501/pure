@@ -1717,17 +1717,6 @@
     ]
   },
   {
-    "bazaarId": "2d06885f424b462589b43cc7849a2a03",
-    "hancoin": 400,
-    "sellEndDate": "2026/11/07 01:20",
-    "listingItems": [
-      "A311Y2",
-      "E22AR",
-      "E2YO1",
-      "A49WJ"
-    ]
-  },
-  {
     "bazaarId": "395d637441644def8353acffeb1990f0",
     "hancoin": 500,
     "sellEndDate": "2026/11/02 21:54",
@@ -2043,15 +2032,6 @@
     "sellEndDate": "2026/11/06 10:43",
     "listingItems": [
       "FA21A1"
-    ]
-  },
-  {
-    "bazaarId": "189704bf08df41ccb877a5560ede8219",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/06 10:16",
-    "listingItems": [
-      "B112U9",
-      "AB17L"
     ]
   },
   {
