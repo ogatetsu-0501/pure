@@ -63,6 +63,17 @@
     ]
   },
   {
+    "bazaarId": "27d202502bf745e39bc1046d5cb1d988",
+    "hancoin": 800,
+    "sellEndDate": "2026/11/07 09:43",
+    "listingItems": [
+      "CT1TM",
+      "B31DR",
+      "AF1KN",
+      "A26FT"
+    ]
+  },
+  {
     "bazaarId": "aba28eefebad4896a54e126937262f5c",
     "hancoin": 100,
     "sellEndDate": "2026/11/02 21:27",
@@ -1764,17 +1775,6 @@
       "AE2XW",
       "A25AW",
       "CT2JC"
-    ]
-  },
-  {
-    "bazaarId": "8efe785ceb3d4dc3aec8cf080a28fe26",
-    "hancoin": 100,
-    "sellEndDate": "2026/10/31 10:13",
-    "listingItems": [
-      "A13AG",
-      "ABIJ",
-      "A47CF",
-      "AA2XS"
     ]
   },
   {
