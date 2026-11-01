@@ -1348,17 +1348,6 @@
     ]
   },
   {
-    "bazaarId": "c1bef580084548ee99d740eedcbbb316",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/07 12:30",
-    "listingItems": [
-      "E1O5",
-      "E31WT",
-      "A4X9J",
-      "AA2ZQ"
-    ]
-  },
-  {
     "bazaarId": "051020dc61134916a29ed8ccb69ac792",
     "hancoin": 100,
     "sellEndDate": "2026/11/07 11:59",
@@ -1367,6 +1356,17 @@
       "E31WT",
       "E41XO",
       "B22DO"
+    ]
+  },
+  {
+    "bazaarId": "c1bef580084548ee99d740eedcbbb316",
+    "hancoin": 100,
+    "sellEndDate": "2026/11/07 12:30",
+    "listingItems": [
+      "E1O5",
+      "E31WT",
+      "A4X9J",
+      "AA2ZQ"
     ]
   },
   {
