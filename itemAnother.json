@@ -172,5 +172,23 @@
     "itemName": "【SPD+2】スノーワンピ上",
     "parts": "",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "P111BRJ",
+    "itemName": "【HP+500】ベルショート",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD11BA5",
+    "itemName": "【VIT+2】小梅晴れ着・下",
+    "parts": "",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD11C6K",
+    "itemName": "【SP+500】ラビ部屋着・下",
+    "parts": "",
+    "itemGender": "M"
   }
 ]
