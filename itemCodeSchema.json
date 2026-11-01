@@ -17446,5 +17446,17 @@
     "itemName": "【LUK+4】海中の世界",
     "parts": "A4",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "AA1DEH",
+    "itemName": "【LUK+2】勝負の時",
+    "parts": "AA",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AF1DEJ",
+    "itemName": "【SPD+2】トランプピアス",
+    "parts": "AF",
+    "itemGender": "A"
   }
 ]
