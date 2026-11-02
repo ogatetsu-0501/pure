@@ -1758,17 +1758,6 @@
     ]
   },
   {
-    "bazaarId": "aba28eefebad4896a54e126937262f5c",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/02 21:27",
-    "listingItems": [
-      "AFMQ",
-      "LC1EET",
-      "CT1I2",
-      "B1GR"
-    ]
-  },
-  {
     "bazaarId": "0ce19b8519b04774beca1be2b5d18e66",
     "hancoin": 100,
     "sellEndDate": "2026/11/06 21:06",
@@ -2426,17 +2415,6 @@
       "A321Y2",
       "A49OC",
       "LC2EN4"
-    ]
-  },
-  {
-    "bazaarId": "fe358370f5dc43e2a2659b4c092e751e",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/02 21:24",
-    "listingItems": [
-      "LC1ED4",
-      "P114JL",
-      "AE2BI",
-      "AA2DT"
     ]
   }
 ]
