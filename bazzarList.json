@@ -170,16 +170,6 @@
     ]
   },
   {
-    "bazaarId": "be42ea8007f64ba582c9556180cd765d",
-    "hancoin": 1500,
-    "sellEndDate": "2026/11/05 06:07",
-    "listingItems": [
-      "A11058",
-      "B3299",
-      "B1ML"
-    ]
-  },
-  {
     "bazaarId": "395d637441644def8353acffeb1990f0",
     "hancoin": 500,
     "sellEndDate": "2026/11/02 21:54",
@@ -229,6 +219,16 @@
       "A4CP9",
       "HD1YXZ",
       "B1HG"
+    ]
+  },
+  {
+    "bazaarId": "be42ea8007f64ba582c9556180cd765d",
+    "hancoin": 1500,
+    "sellEndDate": "2026/11/05 06:07",
+    "listingItems": [
+      "A11058",
+      "B3299",
+      "B1ML"
     ]
   },
   {
