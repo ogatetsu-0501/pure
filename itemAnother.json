@@ -1,23 +1,5 @@
 [
   {
-    "itemCode": "P1111OK",
-    "itemName": "ハチワレのはっち・H",
-    "parts": "P",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "LD111OE",
-    "itemName": "ハチワレのはっち・B",
-    "parts": "HL",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "A41D3S",
-    "itemName": "[’S]麗脈海底",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "A11AI5",
     "itemName": "ハロウィンカーテン",
     "parts": "A1",
