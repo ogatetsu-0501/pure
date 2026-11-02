@@ -17464,5 +17464,11 @@
     "itemName": "【HP+500】ソウルチャーム",
     "parts": "B3",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "P121CD7",
+    "itemName": "【VIT+2】あいか",
+    "parts": "P",
+    "itemGender": "F"
   }
 ]

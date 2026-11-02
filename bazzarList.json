@@ -282,23 +282,6 @@
     ]
   },
   {
-    "bazaarId": "bea8e1bdd57442b4accadeba6377e47b",
-    "hancoin": 400,
-    "sellEndDate": "2026/11/02 16:56",
-    "listingItems": [
-      "A211LI",
-      "LD21DEO"
-    ]
-  },
-  {
-    "bazaarId": "4464e314e9f4420e8418ecd56d64c0d4",
-    "hancoin": 200,
-    "sellEndDate": "2026/11/06 09:44",
-    "listingItems": [
-      "LD21DEO"
-    ]
-  },
-  {
     "bazaarId": "0608b4d926e34fcbbea1f24a401ab210",
     "hancoin": 800,
     "sellEndDate": "2026/11/05 06:20",
@@ -309,12 +292,11 @@
     ]
   },
   {
-    "bazaarId": "9e9c883800544c458b0dfec80af630da",
-    "hancoin": 300,
-    "sellEndDate": "2026/11/02 16:56",
+    "bazaarId": "4464e314e9f4420e8418ecd56d64c0d4",
+    "hancoin": 200,
+    "sellEndDate": "2026/11/06 09:44",
     "listingItems": [
-      "LC2ENB",
-      "P128DF"
+      "LD21DEO"
     ]
   },
   {
