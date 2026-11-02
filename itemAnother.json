@@ -148,5 +148,23 @@
     "itemName": "【復刻】トリコロハートめがね",
     "parts": "",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "AE1DV9",
+    "itemName": "ビズバニラリボン・26th",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P121DW5",
+    "itemName": "ヴェルル・26th",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD21DVV",
+    "itemName": "ラブランコントル・26th",
+    "parts": "",
+    "itemGender": "F"
   }
 ]
