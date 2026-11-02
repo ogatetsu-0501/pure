@@ -1001,28 +1001,6 @@
     ]
   },
   {
-    "bazaarId": "7fb9d227a8a24190881fdea63ba3978c",
-    "hancoin": 200,
-    "sellEndDate": "2026/11/08 00:54",
-    "listingItems": [
-      "A24G3",
-      "AA2GH",
-      "B3190",
-      "LD11CL4"
-    ]
-  },
-  {
-    "bazaarId": "18bcc977b79c45c3ac1ea8e9af8df70e",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/02 21:10",
-    "listingItems": [
-      "LC1EDL",
-      "P115E8",
-      "AA2GH",
-      "A49Q7"
-    ]
-  },
-  {
     "bazaarId": "389886f6cb884b42a3ba14ecc49f61ab",
     "hancoin": 200,
     "sellEndDate": "2026/11/04 23:35",
@@ -1031,6 +1009,17 @@
       "AA2GH",
       "B31A6",
       "CT119Q2"
+    ]
+  },
+  {
+    "bazaarId": "7fb9d227a8a24190881fdea63ba3978c",
+    "hancoin": 200,
+    "sellEndDate": "2026/11/08 00:54",
+    "listingItems": [
+      "A24G3",
+      "AA2GH",
+      "B3190",
+      "LD11CL4"
     ]
   },
   {
@@ -2099,17 +2088,6 @@
     "sellEndDate": "2026/11/06 23:29",
     "listingItems": [
       "HD2XXJ"
-    ]
-  },
-  {
-    "bazaarId": "bea12b09f70f44f195aede885aa7d1af",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/02 21:09",
-    "listingItems": [
-      "LC1ECG",
-      "CT1H3",
-      "P114ZW",
-      "AE2W4"
     ]
   },
   {
