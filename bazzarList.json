@@ -11,17 +11,6 @@
     ]
   },
   {
-    "bazaarId": "d8545674708f4ea5897a5859b1c34782",
-    "hancoin": 300,
-    "sellEndDate": "2026/11/08 00:56",
-    "listingItems": [
-      "LC1EJ7",
-      "A219JC",
-      "A410PY",
-      "CT1EB"
-    ]
-  },
-  {
     "bazaarId": "f8dac706af0e4a9580cba321478220f2",
     "hancoin": 100,
     "sellEndDate": "2026/11/05 20:10",
@@ -30,6 +19,17 @@
       "CT2UAG",
       "AE4FK",
       "AD19Z9"
+    ]
+  },
+  {
+    "bazaarId": "d8545674708f4ea5897a5859b1c34782",
+    "hancoin": 300,
+    "sellEndDate": "2026/11/08 00:56",
+    "listingItems": [
+      "LC1EJ7",
+      "A219JC",
+      "A410PY",
+      "CT1EB"
     ]
   },
   {
