@@ -438,26 +438,6 @@
     ]
   },
   {
-    "bazaarId": "1805c93da84147d7909c1a80161e724b",
-    "hancoin": 100,
-    "sellEndDate": "2026/11/09 08:25",
-    "listingItems": [
-      "A25AW",
-      "E1111",
-      "CT2IQ",
-      "LC2EDV"
-    ]
-  },
-  {
-    "bazaarId": "99ab47d2226a4bd9b93a8ce588dae46e",
-    "hancoin": 200,
-    "sellEndDate": "2026/11/02 21:41",
-    "listingItems": [
-      "CT2IQ",
-      "AE2SV"
-    ]
-  },
-  {
     "bazaarId": "2ac9f6438bfc414ab949fcc838d354de",
     "hancoin": 100,
     "sellEndDate": "2026/11/04 13:42",
@@ -466,6 +446,17 @@
       "E228Q",
       "B32E0",
       "CT2IQ"
+    ]
+  },
+  {
+    "bazaarId": "1805c93da84147d7909c1a80161e724b",
+    "hancoin": 100,
+    "sellEndDate": "2026/11/09 08:25",
+    "listingItems": [
+      "A25AW",
+      "E1111",
+      "CT2IQ",
+      "LC2EDV"
     ]
   },
   {
