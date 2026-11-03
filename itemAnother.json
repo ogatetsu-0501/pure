@@ -160,5 +160,41 @@
     "itemName": "ヴィヒレア",
     "parts": "",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "AA3N6",
+    "itemName": "イケない恋におぼれたい",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AA2N4",
+    "itemName": "[FM＋]メモリーオブラブ",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AA2VY",
+    "itemName": "[Lo]スキじゃないよ",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "CT210T7",
+    "itemName": "揺らぐしっぽ・豹",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4BAM",
+    "itemName": "[FM＋]モルディブでバカンス",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A43ZU",
+    "itemName": "キラキラ水面",
+    "parts": "",
+    "itemGender": "A"
   }
 ]
