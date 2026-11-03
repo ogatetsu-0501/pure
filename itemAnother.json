@@ -142,5 +142,23 @@
     "itemName": "【INT+7】水中の光",
     "parts": "",
     "itemGender": "M"
+  },
+  {
+    "itemCode": "A4C74",
+    "itemName": "恋おち・つむぐ信愛",
+    "parts": "",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P1210Z6",
+    "itemName": "フリルコルネット",
+    "parts": "",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P12ZHJ",
+    "itemName": "ヴィヒレア",
+    "parts": "",
+    "itemGender": "F"
   }
 ]
